@@ -1,7 +1,7 @@
-import pandas as pd
-import yaml
 from sqlalchemy import create_engine, text
 import os
+import pandas as pd
+import yaml
 
 
 def load_credentials(file_path):
