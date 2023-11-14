@@ -1,6 +1,7 @@
 import pandas as pd
 import yaml
 from sqlalchemy import create_engine, text
+import os
 
 
 def load_credentials(file_path):
@@ -41,6 +42,17 @@ class RDSDatabaseConnector:
             df = pd.DataFrame(data, columns=columns)
             return df
     
+def save_df_to_csv(df, file_name, destination_folder=None):
+    # If a destination folder is provided, create it if it doesn't exist
+    if destination_folder:
+        os.makedirs(destination_folder, exist_ok=True)
+        file_path = os.path.join(destination_folder, file_name)
+    else:
+        file_path = file_name
+        # Save DataFrame to CSV
+    df.to_csv(file_path, index=False)
+    print(f"Data saved to {file_path}")
+
 
 if __name__ == '__main__':
     my_credentials = load_credentials('credentials.yaml') 
@@ -49,7 +61,13 @@ if __name__ == '__main__':
     table_name = 'customer_activity'
     customer_activity_df = database_connector.fetch_all_data_to_df(table_name)
     print(type(customer_activity_df))
-    
+    print(customer_activity_df.shape)
+    csv_file_name = 'customer_activity.csv'
+    #save_in_folder = '/Users/silviaaragon/Aicore/exploratory-data-analysis---online-shopping-in-retail'
+    save_df_to_csv(customer_activity_df, csv_file_name)
+
+
+
 
     
 
