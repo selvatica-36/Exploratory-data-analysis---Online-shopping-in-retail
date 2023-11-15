@@ -1,5 +1,7 @@
 # Ignore credentials file
 credentials.yaml
+
+# Others
 .DS_Store
 
 # Byte-compiled / optimized / DLL files
