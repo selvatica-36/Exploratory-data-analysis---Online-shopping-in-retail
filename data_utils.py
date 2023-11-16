@@ -4,7 +4,11 @@ import pandas as pd
 class DataTransform:
         def __init__(self, dataframe):
             self.df = dataframe.copy()
-            
+        
+        # TODO: add possibility of slicing numerically
+        # TODO: add error handling
+        # FIXME: astype method syntax
+        # TODO: add remaining data types if applicable
         def convert_to_type(self, column_name, data_type):
                 try:
                     if data_type == 'str':
@@ -33,7 +37,8 @@ class DataTransform:
         def get_dataframe(self):
             return self.df
         
-
+ # TODO: add possibility of slicing numerically
+ # TODO: add error handling
 class DataFrameInfo:
     def __init__(self, dataframe):
         self.df = dataframe.copy()
@@ -57,9 +62,13 @@ class DataFrameInfo:
 
     def count_distinct_values(self, columns=None):
         subset = self._get_slice(columns)
-        distinct_counts = {}
-        for column in subset.columns:
-            distinct_counts[column] = subset[column].nunique()
+        #distinct_counts = {}
+        #for column in subset.columns:
+            #distinct_counts[column] = subset[column].nunique()
+        distinct_counts = pd.DataFrame({
+            'Column': subset.columns,
+            'Distinct Values Count': [subset[column].nunique() for column in subset.columns]
+        })
         return distinct_counts
 
     def print_shape(self, columns=None):
