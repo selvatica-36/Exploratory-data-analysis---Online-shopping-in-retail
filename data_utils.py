@@ -221,6 +221,38 @@ class StatisticalTests(DataFrameInfo):
     def K2_test(self, column_name): # Test for normality in continuous variables
         stat, p = normaltest(self.df[column_name], nan_policy='omit')
         print('Statistics=%.3f, p=%.3f' % (stat, p))
+    def z_scores(self, column):
+        mean_col = np.mean(self.df[column])
+        std_col = np.std(self.df[column])
+        z_scores = (self.df[column] - mean_col) / std_col
+        col_values = self.df[column].copy()
+        col_values['z-scores'] = z_scores
+        return col_values
+        
+    def IQR(self, column_list):
+        for col in column_list:
+            Q1 = self.df[col].quantile(0.25)
+            Q3 = self.df[col].quantile(0.75)
+            # Calculate IQR
+            IQR = Q3 - Q1
+            print(f"\nResults for {col} column:")
+            print(f"Q1 (25th percentile): {Q1}")
+            print(f"Q3 (75th percentile): {Q3}")
+            print(f"IQR: {IQR}")
+            
+    def IQR_outliers(self,column_list):
+        for col in column_list:
+            Q1 = self.df[col].quantile(0.25)
+            Q3 = self.df[col].quantile(0.75)
+            # Calculate IQR
+            IQR = Q3 - Q1
+            print(f"\nResults for {col} column:")
+            print(f"Q1 (25th percentile): {Q1}")
+            print(f"Q3 (75th percentile): {Q3}")
+            print(f"IQR: {IQR}")
+            outliers = self.df[(self.df[col] < (Q1 - 1.5 * IQR)) | (self.df[col] > (Q3 + 1.5 * IQR))]
+            print("Outliers:")
+            print(outliers.shape)
 
 
 
