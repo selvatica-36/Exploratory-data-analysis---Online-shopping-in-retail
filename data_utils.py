@@ -141,7 +141,6 @@ class DataTransform:
                     return self.df.copy()
                 else:
                     print("Error: the parameter 'ignore_errors' is a bool and can only be True or False.")
-
         def convert_month_to_period(self, column_name):
             try:
                 self.df[column_name] = self.df[column_name].astype(str)
@@ -153,12 +152,10 @@ class DataTransform:
             except Exception as e:
                 print(f"Error converting 'month' column to period: {e}")
             return self.df.copy()
-
         def convert_columns(self, column_list, data_type, ignore_errors=True):
             for column in column_list:
                 self.convert_to_type(column, data_type, ignore_errors)
             return self.df.copy()
-        
         def impute_nulls_with_median(self, columns_list):
                 for column in columns_list:
                     self.df[column] = self.df[column].fillna(self.df[column].median())
@@ -180,23 +177,11 @@ class DataTransform:
         def log_transform(self, column_list):
             for col in column_list:
                 self.df[col] = self.df[col].map(lambda i: np.log(i) if i > 0 else 0)
-        def plot_boxcox_transform(self, column_list):
-            for col in column_list:
-                boxcox_population = self.df[col]
-                boxcox_population= stats.boxcox(boxcox_population)
-                boxcox_population= pd.Series(boxcox_population[0])
-                t=sns.histplot(boxcox_population,label="Skewness: %.2f"%(boxcox_population.skew()) )
-                t.legend()
+      
         def boxcox_transform(self, column_list):
             for col in column_list:
                 self.df[col]= stats.boxcox(self.df[col])    
-        def plot_yeo_johnson_transform(self, column_list):
-            for col in column_list:
-                yeojohnson_population = self.df[col]
-                yeojohnson_population = stats.yeojohnson(yeojohnson_population)
-                yeojohnson_population= pd.Series(yeojohnson_population[0])
-                t=sns.histplot(yeojohnson_population,label="Skewness: %.2f"%(yeojohnson_population.skew()) )
-                t.legend()
+       
         def yeo_johnson_transform(self, column_list):
             for col in column_list:
                 self.df[col] = stats.yeojohnson(self.df[col])
@@ -313,7 +298,30 @@ class Plotter(StatisticalTests):
         f = pd.melt(self.df, value_vars=categorical_features)
         g = sns.FacetGrid(f, col='variable',  col_wrap=3, sharex=False, sharey=False)
         g = g.map(self.count_plot, 'value')
-  
+
+    def plot_log_transform(self, column_list):
+        for col in column_list:
+            log_col = self.df[col].map(lambda i: np.log(i) if i > 0 else 0)
+            t=sns.histplot(log_col,label="Skewness: %.2f"%(log_col.skew()), kde=True )
+            t.legend()
+            t.title(f"{col}")
+    
+    def plot_boxcox_transform(self, column_list):
+        for col in column_list:
+            boxcox_population = self.df[col]
+            boxcox_population= stats.boxcox(boxcox_population)
+            boxcox_population= pd.Series(boxcox_population[0])
+            t=sns.histplot(boxcox_population,label="Skewness: %.2f"%(boxcox_population.skew()) )
+            t.legend()
+    
+    def plot_yeo_johnson_transform(self, column_list):
+        for col in column_list:
+            yeojohnson_population = self.df[col]
+            yeojohnson_population = stats.yeojohnson(yeojohnson_population)
+            yeojohnson_population= pd.Series(yeojohnson_population[0])
+            t=sns.histplot(yeojohnson_population,label="Skewness: %.2f"%(yeojohnson_population.skew()) )
+            t.legend()
+    
     
 
 
