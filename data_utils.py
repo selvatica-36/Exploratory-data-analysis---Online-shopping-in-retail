@@ -1,4 +1,5 @@
-from scipy.stats import chi2_contingency
+from scipy.stats import chi2_contingency, normaltest
+from statsmodels.graphics.gofplots import qqplot
 import missingno as msno
 import numpy as np
 import pandas as pd
@@ -71,16 +72,25 @@ class DataFrameInfo:
             'null_percentage': null_percentages
         })
         return null_info
-    def chi_square_test(self, column_1, column_2):
+    def chi_square_test(self, column_1, column_list):
         new_df_test = self.df.copy()
         new_df_test[column_1] = new_df_test[column_1].isnull()
         # Step 2: Crosstab the new column with B
-        contingency_table = pd.crosstab(new_df_test[column_1], new_df_test[column_2])
-        # Step 3: Perform chi-squared test
-        chi2, p, dof, expected = chi2_contingency(contingency_table)
-        print(f"Chi-square statistic = {chi2}")
-        print(f"p-value = {p}")
-        
+        for column in column_list:
+            contingency_table = pd.crosstab(new_df_test[column_1], new_df_test[column])
+            # Step 3: Perform chi-squared test
+            chi2, p, dof, expected = chi2_contingency(contingency_table)
+            if p < 0.05:
+                print(f"Chi-square test for missing values in {column_1} against {column} column: ")
+                print(f"p-value = {p}: Significant")
+            elif p == 0.05:
+                print(f"Chi-square test for missing values in {column_1} against {column} column: ")
+                print(f"p-value = {p}: Likely not significant")
+    def K2_test(self, column_name):
+        stat, p = normaltest(self.df[column_name], nan_policy='omit')
+        print('Statistics=%.3f, p=%.3f' % (stat, p))
+
+
 
 class DataTransform:
         def __init__(self, dataframe):
@@ -201,6 +211,27 @@ class Plotter():
     def correlation_heatmap(self, column_list):
         sns.heatmap(self.df[column_list].corr(), annot=True, cmap='coolwarm')
 
+    def correlation_matrix_df(self):
+        corr = self.df.select_dtypes(include = np.number).corr()
+        mask = np.zeros_like(corr, dtype=np.bool_)
+        mask[np.triu_indices_from(mask)] = True
+        # set thins up for plotting
+        cmap = sns.diverging_palette(220, 10, as_cmap=True)
+        # Draw the heatmap
+        sns.heatmap(corr, mask=mask, 
+                    square=True, linewidths=.5, annot=False, cmap=cmap)
+        plt.yticks(rotation=0)
+        plt.title('Correlation Matrix of all Numerical Variables')
+        plt.show()
+
+    def qqplot(self,column_list):
+        for column in column_list:
+            qq_plot = qqplot(self.df[column], scale=1 ,line='q')
+
+    def plot_dataframe_nulls(self):
+        msno.matrix(self.df)
+
+    
     
 
     
