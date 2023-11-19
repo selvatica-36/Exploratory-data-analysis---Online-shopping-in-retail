@@ -1,4 +1,4 @@
-from scipy.stats import chi2_contingency, normaltest
+from scipy import stats
 from statsmodels.graphics.gofplots import qqplot
 import missingno as msno
 import numpy as np
@@ -80,9 +80,14 @@ class DataFrameInfo:
             categorical_features = [col for col in self.df.columns if col not in numeric_features]
             return categorical_features
         else:
-            self.extract_numeric_features()
+            numeric_features = self.extract_numeric_features()
             categorical_features = [col for col in self.df.columns if col not in numeric_features]
             return categorical_features
+    def print_summary_statistics(self, column_name):
+            print(f"The mode of the distribution is {self.df[column_name].mode()[0]}")
+            print(f"The mean of the distribution is {self.df[column_name].mean()}")
+            print(f"The median of the distribution is {self.df[column_name].median()}")
+
 
 class DataTransform:
         def __init__(self, dataframe):
@@ -166,38 +171,77 @@ class DataTransform:
                 for column in columns_list:
                     self.df[column] = self.df[column].fillna(self.df[column].mode()[0])
                 return self.df
+        def plot_log_transform(self, column_list):
+            for col in column_list:
+                log_col = self.df[col].map(lambda i: np.log(i) if i > 0 else 0)
+                t=sns.histplot(log_col,label="Skewness: %.2f"%(log_col.skew()), kde=True )
+                t.legend()
+                t.title(f"{col}")
+        def log_transform(self, column_list):
+            for col in column_list:
+                self.df[col] = self.df[col].map(lambda i: np.log(i) if i > 0 else 0)
+        def plot_boxcox_transform(self, column_list):
+            for col in column_list:
+                boxcox_population = self.df[col]
+                boxcox_population= stats.boxcox(boxcox_population)
+                boxcox_population= pd.Series(boxcox_population[0])
+                t=sns.histplot(boxcox_population,label="Skewness: %.2f"%(boxcox_population.skew()) )
+                t.legend()
+        def boxcox_transform(self, column_list):
+            for col in column_list:
+                self.df[col]= stats.boxcox(self.df[col])    
+        def plot_yeo_johnson_transform(self, column_list):
+            for col in column_list:
+                yeojohnson_population = self.df[col]
+                yeojohnson_population = stats.yeojohnson(yeojohnson_population)
+                yeojohnson_population= pd.Series(yeojohnson_population[0])
+                t=sns.histplot(yeojohnson_population,label="Skewness: %.2f"%(yeojohnson_population.skew()) )
+                t.legend()
+        def yeo_johnson_transform(self, column_list):
+            for col in column_list:
+                self.df[col] = stats.yeojohnson(self.df[col])
+
             
-class StatisticalTests:
+class StatisticalTests(DataFrameInfo):
     def __init__(self, dataframe):
         self.df = dataframe.copy()
-    def chi_square_test(self, column_1, column_list):
+        
+    def chi_square_test(self, column_1, column_list): # Only between categorical variables
         chi_sq_test_df = self.df.copy()
         chi_sq_test_df[column_1] = chi_sq_test_df[column_1].isnull()
         # Step 2: Crosstab the new column with B
-        for column in column_list:
-            contingency_table = pd.crosstab(chi_sq_test_df[column_1], chi_sq_test_df[column])
-            # Step 3: Perform chi-squared test
-            chi2, p, dof, expected = chi2_contingency(contingency_table)
-            if p < 0.05:
+        if len(column_list) > 3:
+            for column in column_list:
+                contingency_table = pd.crosstab(chi_sq_test_df[column_1], chi_sq_test_df[column])
+                # Step 3: Perform chi-squared test
+                chi2, p, dof, expected = chi2_contingency(contingency_table)
+                if p < 0.05:
+                    print(f"Chi-square test for missing values in {column_1} against {column} column: ")
+                    print(f"p-value = {p}: Significant")
+                    return p
+                elif p == 0.05:
+                    print(f"Chi-square test for missing values in {column_1} against {column} column: ")
+                    print(f"p-value = {p}: Likely not significant")
+                    return p
+        elif len(column_list) <= 3:
+            for column in column_list:
+                contingency_table = pd.crosstab(chi_sq_test_df[column_1], chi_sq_test_df[column])
+                # Step 3: Perform chi-squared test
+                chi2, p, dof, expected = chi2_contingency(contingency_table)
                 print(f"Chi-square test for missing values in {column_1} against {column} column: ")
-                print(f"p-value = {p}: Significant")
-            elif p == 0.05:
-                print(f"Chi-square test for missing values in {column_1} against {column} column: ")
-                print(f"p-value = {p}: Likely not significant")
-    def K2_test(self, column_name):
+                print(f"p-value = {p}")
+                return p
+    def K2_test(self, column_name): # Test for normality in continuous variables
         stat, p = normaltest(self.df[column_name], nan_policy='omit')
         print('Statistics=%.3f, p=%.3f' % (stat, p))
 
-class Plotter:
+
+
+class Plotter(StatisticalTests):
     def __init__(self,dataframe):
         self.df = dataframe.copy()
-
-    def print_summary_statistics(self, column_name):
-        print(f"The mode of the distribution is {self.df[column_name].mode()[0]}")
-        print(f"The mean of the distribution is {self.df[column_name].mean()}")
-        print(f"The median of the distribution is {self.df[column_name].median()}")
         
-    def discrete_probability_distribution(self, column_name):
+    def discrete_probability_distribution(self, column_name, **kwargs):
         plt.rc("axes.spines", top=False, right=False)
         sns.set_style(style='darkgrid', rc=None)
         probs = self.df[column_name].value_counts(normalize=True)
@@ -208,16 +252,15 @@ class Plotter:
         plt.ylabel('Probability')
         plt.title('Discrete Probability Distribution')
         plt.show()
-        self.print_summary_statistics(column_name)
 
     def continuous_probability_distribution(self, column_name, column_list=None):
         if column_list is not None:
             for col in column_list:
                 sns.histplot(self.df[col], kde=True, color='blue', stat="probability", bins=30)
-                self.print_summary_statistics(col)
+                super().print_summary_statistics(col)
         else:
             sns.histplot(self.df[column_name], kde=True, color='blue', stat="probability", bins=30)
-            self.print_summary_statistics(column_name)
+            super().print_summary_statistics(column_name)
 
     def correlation_heatmap(self, column_list):
         sns.heatmap(self.df[column_list].corr(), annot=True, cmap='coolwarm')
@@ -242,14 +285,36 @@ class Plotter:
     def nulls_dataframe_plot(self):
         msno.matrix(self.df)
 
-    def pair_corr_plot(self, numeric_features):
-        sns.pairplot(self.df[numeric_features])
+    def pair_correlations_grid(self, numeric_features=None):
+        if numeric_features is not None:
+            sns.pairplot(self.df[numeric_features])
+        else:
+            numeric_features = super().extract_numeric_features()
+            sns.pairplot(self.df[numeric_features])
 
-    def numeric_distributions(self, numeric_features, kde=True):
-        sns.set(font_scale=0.7)
-        f = pd.melt(self.df, value_vars=numeric_features)
-        g = sns.FacetGrid(f, col="variable",  col_wrap=3, sharex=False, sharey=False)
-        g = g.map(sns.histplot, "value", kde=kde)
+    def numeric_distributions_grid(self, numeric_features=None, kde=True):
+        if numeric_features is not None:
+            sns.set(font_scale=0.7)
+            f = pd.melt(self.df, value_vars=numeric_features)
+            g = sns.FacetGrid(f, col="variable",  col_wrap=3, sharex=False, sharey=False)
+            g = g.map(sns.histplot, "value", kde=kde)
+        else:
+            numeric_features = super().extract_numeric_features()
+            sns.set(font_scale=0.7)
+            f = pd.melt(self.df, value_vars=numeric_features)
+            g = sns.FacetGrid(f, col="variable",  col_wrap=3, sharex=False, sharey=False)
+            g = g.map(sns.histplot, "value", kde=kde)
+
+    def count_plot(self, x, **kwargs):
+        sns.countplot(x=x)
+        x=plt.xticks(rotation=90)
+
+    def count_plots_grid(self, categorical_features):
+        f = pd.melt(self.df, value_vars=categorical_features)
+        g = sns.FacetGrid(f, col='variable',  col_wrap=3, sharex=False, sharey=False)
+        g = g.map(self.count_plot, 'value')
+  
+    
 
 
     
