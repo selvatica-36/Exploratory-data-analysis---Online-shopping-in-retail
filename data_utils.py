@@ -1,4 +1,5 @@
 from scipy import stats
+from scipy.stats import chi2_contingency, normaltest
 from statsmodels.graphics.gofplots import qqplot
 import missingno as msno
 import numpy as np
@@ -168,23 +169,24 @@ class DataTransform:
                 for column in columns_list:
                     self.df[column] = self.df[column].fillna(self.df[column].mode()[0])
                 return self.df
-        def plot_log_transform(self, column_list):
-            for col in column_list:
-                log_col = self.df[col].map(lambda i: np.log(i) if i > 0 else 0)
-                t=sns.histplot(log_col,label="Skewness: %.2f"%(log_col.skew()), kde=True )
-                t.legend()
-                t.title(f"{col}")
+
         def log_transform(self, column_list):
             for col in column_list:
                 self.df[col] = self.df[col].map(lambda i: np.log(i) if i > 0 else 0)
+            return self.df
       
         def boxcox_transform(self, column_list):
             for col in column_list:
-                self.df[col]= stats.boxcox(self.df[col])    
+                boxcox_population, lambda_values = stats.boxcox(self.df[col])
+                self.df[col] = boxcox_population
+            return self.df
        
         def yeo_johnson_transform(self, column_list):
             for col in column_list:
-                self.df[col] = stats.yeojohnson(self.df[col])
+                nonzero_values = self.df[col][self.df[col] != 0]
+                yeojohnson_values, lambda_value = stats.yeojohnson(nonzero_values)
+                self.df[col] = self.df[col].apply(lambda x: stats.yeojohnson([x], lmbda=lambda_value)[0] if x != 0 else 0)
+            return self.df
 
             
 class StatisticalTests(DataFrameInfo):
@@ -299,28 +301,27 @@ class Plotter(StatisticalTests):
         g = sns.FacetGrid(f, col='variable',  col_wrap=3, sharex=False, sharey=False)
         g = g.map(self.count_plot, 'value')
 
-    def plot_log_transform(self, column_list):
-        for col in column_list:
-            log_col = self.df[col].map(lambda i: np.log(i) if i > 0 else 0)
-            t=sns.histplot(log_col,label="Skewness: %.2f"%(log_col.skew()), kde=True )
-            t.legend()
-            t.title(f"{col}")
+    def plot_log_transform(self, col):
+        nonzero_values = self.df[col][self.df[col] != 0]
+        log_col = nonzero_values.map(lambda i: np.log(i) if i > 0 else 0)
+        t=sns.histplot(log_col,label="Skewness: %.2f"%(log_col.skew()), kde=True )
+        t.legend()
     
-    def plot_boxcox_transform(self, column_list):
-        for col in column_list:
-            boxcox_population = self.df[col]
-            boxcox_population= stats.boxcox(boxcox_population)
-            boxcox_population= pd.Series(boxcox_population[0])
-            t=sns.histplot(boxcox_population,label="Skewness: %.2f"%(boxcox_population.skew()) )
-            t.legend()
+    def plot_boxcox_transform(self, col):
+        boxcox_population = self.df[col]
+        boxcox_population= stats.boxcox(boxcox_population)
+        boxcox_population= pd.Series(boxcox_population[0])
+        t=sns.histplot(boxcox_population,label="Skewness: %.2f"%(boxcox_population.skew()) )
+        t.legend()
     
-    def plot_yeo_johnson_transform(self, column_list):
-        for col in column_list:
-            yeojohnson_population = self.df[col]
-            yeojohnson_population = stats.yeojohnson(yeojohnson_population)
-            yeojohnson_population= pd.Series(yeojohnson_population[0])
-            t=sns.histplot(yeojohnson_population,label="Skewness: %.2f"%(yeojohnson_population.skew()) )
-            t.legend()
+    def plot_yeo_johnson_transform(self, col):
+        nonzero_values = self.df[col][self.df[col] != 0]
+        yeojohnson_population = stats.yeojohnson(nonzero_values)
+        yeojohnson_population= pd.Series(yeojohnson_population[0])
+        t=sns.histplot(yeojohnson_population,label="Skewness: %.2f"%(yeojohnson_population.skew()) )
+        t.legend()
+            
+
     
     
 
