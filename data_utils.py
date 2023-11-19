@@ -72,25 +72,17 @@ class DataFrameInfo:
             'null_percentage': null_percentages
         })
         return null_info
-    def chi_square_test(self, column_1, column_list):
-        new_df_test = self.df.copy()
-        new_df_test[column_1] = new_df_test[column_1].isnull()
-        # Step 2: Crosstab the new column with B
-        for column in column_list:
-            contingency_table = pd.crosstab(new_df_test[column_1], new_df_test[column])
-            # Step 3: Perform chi-squared test
-            chi2, p, dof, expected = chi2_contingency(contingency_table)
-            if p < 0.05:
-                print(f"Chi-square test for missing values in {column_1} against {column} column: ")
-                print(f"p-value = {p}: Significant")
-            elif p == 0.05:
-                print(f"Chi-square test for missing values in {column_1} against {column} column: ")
-                print(f"p-value = {p}: Likely not significant")
-    def K2_test(self, column_name):
-        stat, p = normaltest(self.df[column_name], nan_policy='omit')
-        print('Statistics=%.3f, p=%.3f' % (stat, p))
-
-
+    def extract_numeric_features(self):
+        numeric_features = self.df.select_dtypes(include = np.number)
+        return numeric_features
+    def extract_categorical_features(self, numeric_features=None):
+        if numeric_features is not None:
+            categorical_features = [col for col in self.df.columns if col not in numeric_features]
+            return categorical_features
+        else:
+            self.extract_numeric_features()
+            categorical_features = [col for col in self.df.columns if col not in numeric_features]
+            return categorical_features
 
 class DataTransform:
         def __init__(self, dataframe):
@@ -164,20 +156,46 @@ class DataTransform:
         
         def impute_nulls_with_median(self, columns_list):
                 for column in columns_list:
-                    print("Use this method if NaN values are likely MCAR (p > 0.05)")
                     self.df[column] = self.df[column].fillna(self.df[column].median())
+                return self.df
+        def impute_nulls_with_mean(self, columns_list):
+                for column in columns_list:
+                    self.df[column] = self.df[column].fillna(self.df[column].mean())
                 return self.df
         def impute_nulls_with_mode(self, columns_list):
                 for column in columns_list:
-                    print("Use this method if NaN values are likely MCAR (p > 0.05)")
                     self.df[column] = self.df[column].fillna(self.df[column].mode()[0])
                 return self.df
             
+class StatisticalTests:
+    def __init__(self, dataframe):
+        self.df = dataframe.copy()
+    def chi_square_test(self, column_1, column_list):
+        chi_sq_test_df = self.df.copy()
+        chi_sq_test_df[column_1] = chi_sq_test_df[column_1].isnull()
+        # Step 2: Crosstab the new column with B
+        for column in column_list:
+            contingency_table = pd.crosstab(chi_sq_test_df[column_1], chi_sq_test_df[column])
+            # Step 3: Perform chi-squared test
+            chi2, p, dof, expected = chi2_contingency(contingency_table)
+            if p < 0.05:
+                print(f"Chi-square test for missing values in {column_1} against {column} column: ")
+                print(f"p-value = {p}: Significant")
+            elif p == 0.05:
+                print(f"Chi-square test for missing values in {column_1} against {column} column: ")
+                print(f"p-value = {p}: Likely not significant")
+    def K2_test(self, column_name):
+        stat, p = normaltest(self.df[column_name], nan_policy='omit')
+        print('Statistics=%.3f, p=%.3f' % (stat, p))
 
-
-class Plotter():
+class Plotter:
     def __init__(self,dataframe):
         self.df = dataframe.copy()
+
+    def print_summary_statistics(self, column_name):
+        print(f"The mode of the distribution is {self.df[column_name].mode()[0]}")
+        print(f"The mean of the distribution is {self.df[column_name].mean()}")
+        print(f"The median of the distribution is {self.df[column_name].median()}")
         
     def discrete_probability_distribution(self, column_name):
         plt.rc("axes.spines", top=False, right=False)
@@ -190,23 +208,16 @@ class Plotter():
         plt.ylabel('Probability')
         plt.title('Discrete Probability Distribution')
         plt.show()
-        print(f"The mode of the distribution is {self.df[column_name].mode()[0]}")
-        print(f"The mean of the distribution is {self.df[column_name].mean()}")
-        print(f"The median of the distribution is {self.df[column_name].median()}")
+        self.print_summary_statistics(column_name)
 
     def continuous_probability_distribution(self, column_name, column_list=None):
         if column_list is not None:
             for col in column_list:
                 sns.histplot(self.df[col], kde=True, color='blue', stat="probability", bins=30)
-                print(f"The mode of the distribution is {self.df[col].mode()[0]}")
-                print(f"The mean of the distribution is {self.df[col].mean()}")
-                print(f"The median of the distribution is {self.df[col].median()}")
+                self.print_summary_statistics(col)
         else:
             sns.histplot(self.df[column_name], kde=True, color='blue', stat="probability", bins=30)
-            print(f"The mode of the distribution is {self.df[column_name].mode()[0]}")
-            print(f"The mean of the distribution is {self.df[column_name].mean()}")
-            print(f"The median of the distribution is {self.df[column_name].median()}")
-        
+            self.print_summary_statistics(column_name)
 
     def correlation_heatmap(self, column_list):
         sns.heatmap(self.df[column_list].corr(), annot=True, cmap='coolwarm')
@@ -219,17 +230,27 @@ class Plotter():
         cmap = sns.diverging_palette(220, 10, as_cmap=True)
         # Draw the heatmap
         sns.heatmap(corr, mask=mask, 
-                    square=True, linewidths=.5, annot=False, cmap=cmap)
+                    square=True, linewidths=.5, annot=True, cmap=cmap)
         plt.yticks(rotation=0)
         plt.title('Correlation Matrix of all Numerical Variables')
         plt.show()
 
     def qqplot(self,column_list):
         for column in column_list:
-            qq_plot = qqplot(self.df[column], scale=1 ,line='q')
+            qqplot(self.df[column], scale=1 ,line='q')
 
-    def plot_dataframe_nulls(self):
+    def nulls_dataframe_plot(self):
         msno.matrix(self.df)
+
+    def pair_corr_plot(self, numeric_features):
+        sns.pairplot(self.df[numeric_features])
+
+    def numeric_distributions(self, numeric_features, kde=True):
+        sns.set(font_scale=0.7)
+        f = pd.melt(self.df, value_vars=numeric_features)
+        g = sns.FacetGrid(f, col="variable",  col_wrap=3, sharex=False, sharey=False)
+        g = g.map(sns.histplot, "value", kde=kde)
+
 
     
     
