@@ -13,7 +13,7 @@ class DataFrameInfo:
     def __init__(self, dataframe):
         self.df = dataframe.copy()
 
-    def _get_slice(self, columns=None):
+    def get_slice(self, columns=None):
         if columns is not None:
             try:
                 if isinstance(columns, list): # slice by column names
@@ -35,26 +35,26 @@ class DataFrameInfo:
         else:
             return self.df
     def extract_column_names(self, columns=None):
-        subset = self._get_slice(columns)
+        subset = self.get_slice(columns)
         return list(subset.columns)
     def data_types_columns(self, columns=None):
-        subset = self._get_slice(columns)
+        subset = self.get_slice(columns)
         return subset.dtypes
     def info_columns(self, columns=None):
-        subset = self._get_slice(columns)
+        subset = self.get_slice(columns)
         return subset.info()
     def extract_statistical_values(self, columns=None):
-        subset = self._get_slice(columns)
+        subset = self.get_slice(columns)
         return subset.describe()
     def show_distinct_values(self,columns=None):
-        subset = self._get_slice(columns)
+        subset = self.get_slice(columns)
         for column in subset:
             try:
                 print(f"Unique values in {column}:", np.sort(self.df[column].unique()))
             except TypeError:
                 print(f"Unique values in {column}:", self.df[column].unique())
     def count_distinct_values(self, columns=None):
-        subset = self._get_slice(columns)
+        subset = self.get_slice(columns)
         distinct_counts = pd.DataFrame({
             'column': subset.columns,
             'distinct_values_count': [subset[column].nunique() for column in subset.columns]
@@ -62,10 +62,10 @@ class DataFrameInfo:
         distinct_counts.set_index(['column'], inplace=True)
         return distinct_counts
     def print_shape(self, columns=None):
-        subset = self._get_slice(columns)
+        subset = self.get_slice(columns)
         print("DataFrame Shape:", subset.shape)
     def generate_null_counts(self, columns=None):
-        subset = self._get_slice(columns)
+        subset = self.get_slice(columns)
         null_counts = subset.isnull().sum()
         null_percentages = (null_counts / len(subset)) * 100
         null_info = pd.DataFrame({
