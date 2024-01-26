@@ -1,8 +1,7 @@
 import os
 import pandas as pd
 import yaml
-
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine, text, exc
 from typing import Dict, Optional
 
 
@@ -16,18 +15,22 @@ def load_credentials(file_path: str) -> Dict:
     Returns:
     - dict: A dictionary containing the loaded credentials.
 
-    Examples:
+    Raises:
+    - ValueError: If there is an error loading the credentials.
+
+    Example:
     ```
-    If in the same directory: credentials = load_credentials('credentials.yaml')
-    Otherwise: credentials = load_credentials('path/to/credentials.yaml')
+    credentials = load_credentials('path/to/credentials.yml')
     ```
     """
     with open(file_path, 'r') as file:
         try:
             credentials = yaml.safe_load(file)
+            if credentials is None:
+                raise ValueError("Failed to load credentials. YAML file is empty or malformed.")
             return credentials
         except yaml.YAMLError as e:
-            print(f"Error in parsing YAML file: {e}")
+            raise ValueError(f"Error in parsing YAML file: {e}")
     
  
 class RDSDatabaseConnector:
@@ -95,34 +98,39 @@ class RDSDatabaseConnector:
             self.engine.dispose()
             print("Database connection closed.")
  
-    def fetch_data_to_df(self, table_name = None, sql_query = None):
+    def fetch_data_to_df(self, table_name: Optional[str] = None, sql_query: Optional[str] = None) -> pd.DataFrame:
         """
         Fetch data from the database and return it as a Pandas DataFrame.
 
         Parameters:
-        - table_name (str): The name of the table to fetch data from.
-        - sql_query (str): A custom SQL query to fetch data.
+        - table_name (str, optional): The name of the table to fetch data from.
+        - sql_query (str, optional): A custom SQL query to fetch data.
 
         Returns:
         - pd.DataFrame: The fetched data as a Pandas DataFrame.
+
+        Raises:
+        - exc.SQLAlchemyError: If there is an error in the database query.
 
         Example:
         ```
         df = connector.fetch_data_to_df(table_name='my_table')
         ```
         """
-        if sql_query == None & table_name != None:
-            sql_query = f"SELECT * FROM {table_name}" # If no query provided, selects all data from table
-        elif sql_query == None & table_name == None:
-            print("Error: Please, provide a table_name to extract all data from the table or provide a custom sql_query.")
+        if sql_query is None and table_name is not None:
+            sql_query = f"SELECT * FROM {table_name}"
+        elif sql_query is None and table_name is None:
+            raise ValueError("Error: Please provide a table_name to extract all data from the table or provide an sql_query.")
 
-        # Use context manager to open connection, extract data and close the connection.
         with self.connect() as connection:
-            result = connection.execute(text(sql_query))
-            data = result.fetchall()  # Fetch all rows from the result set
-            columns = result.keys()   # Get column names
-            df = pd.DataFrame(data, columns=columns)
-            return df
+            try:
+                result = connection.execute(text(sql_query))
+                data = result.fetchall()
+                columns = result.keys()
+                df = pd.DataFrame(data, columns=columns)
+                return df
+            except exc.SQLAlchemyError as e:
+                raise exc.SQLAlchemyError(f"Error in executing database query: {e}")
         
 
 def save_df_to_csv(df: pd.DataFrame, file_name: str, destination_folder: Optional[str] = None) -> None:
