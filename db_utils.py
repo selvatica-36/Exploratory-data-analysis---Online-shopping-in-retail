@@ -170,6 +170,8 @@ if __name__ == '__main__':
     csv_file_name = 'customer_activity.csv'
     save_in_folder = 'data'
     save_df_to_csv(customer_activity_df, csv_file_name, save_in_folder)
+    help(save_df_to_csv)
+
 
 
 
