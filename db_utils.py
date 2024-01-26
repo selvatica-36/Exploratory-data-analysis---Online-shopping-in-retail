@@ -54,7 +54,7 @@ class RDSDatabaseConnector:
         self.credentials = credentials
         self.engine = self.initialise_engine()
         
-    def initialise_engine(self) -> create_engine:
+    def initialise_engine(self):
         """
         Initialize the SQLAlchemy engine for database connection.
 
@@ -71,7 +71,7 @@ class RDSDatabaseConnector:
         + f"{self.credentials['RDS_DATABASE']}"
         return create_engine(db_url)
         
-    def connect(self) -> create_engine.connect:
+    def connect(self):
         """
         Establish a connection to the database.
 
