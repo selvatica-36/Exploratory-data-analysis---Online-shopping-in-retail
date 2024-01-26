@@ -1,11 +1,12 @@
 import os
 import pandas as pd
 import yaml
+
 from sqlalchemy import create_engine, text
-# TODO I would doc string your methods it will elevate the standard of your code and make it more
-# maintainable and readable in the future and for employers viewing the code. 
-# TODO I would add typing to each of the parameters in your methods
-def load_credentials(file_path):
+from typing import Dict, Optional
+
+
+def load_credentials(file_path: str) -> Dict:
     """
     Load credentials from a YAML file.
 
@@ -35,7 +36,7 @@ class RDSDatabaseConnector:
     """
 
 
-    def __init__(self, credentials):
+    def __init__(self, credentials: Dict) -> None:
         """
         Initialize the RDSDatabaseConnector.
 
@@ -50,7 +51,7 @@ class RDSDatabaseConnector:
         self.credentials = credentials
         self.engine = self.initialise_engine()
         
-    def initialise_engine(self):
+    def initialise_engine(self) -> create_engine:
         """
         Initialize the SQLAlchemy engine for database connection.
 
@@ -67,7 +68,7 @@ class RDSDatabaseConnector:
         + f"{self.credentials['RDS_DATABASE']}"
         return create_engine(db_url)
         
-    def connect(self):
+    def connect(self) -> create_engine.connect:
         """
         Establish a connection to the database.
 
@@ -81,7 +82,7 @@ class RDSDatabaseConnector:
         """
         return self.engine.connect()
     
-    def close(self):
+    def close(self) -> None:
         """
         Close the database connection.
 
@@ -124,7 +125,7 @@ class RDSDatabaseConnector:
             return df
         
 
-def save_df_to_csv(df, file_name, destination_folder=None):
+def save_df_to_csv(df: pd.DataFrame, file_name: str, destination_folder: Optional[str] = None) -> None:
     """
     Save a Pandas DataFrame to a CSV file.
 
