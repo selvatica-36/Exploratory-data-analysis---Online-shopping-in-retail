@@ -7,13 +7,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.style as style
 import seaborn as sns
-
+# NOTE Nice well ordered import statements here. Just remove the ones that aren't used.
 
 class DataFrameInfo:
     def __init__(self, dataframe):
         self.df = dataframe.copy()
 
     def get_slice(self, columns=None):
+        # NOTE Like this slicing feature to analyse subsets of the data really nice
         if columns is not None:
             try:
                 if isinstance(columns, list): # slice by column names
@@ -26,9 +27,11 @@ class DataFrameInfo:
                     return self.df.iloc[:, columns[0]:columns[1] + 1]
                 else:
                     raise ValueError
+            # NOTE Great use of exception handling here very nice indeed
             except KeyError as ke:
                 print(f"KeyError: you need to provide a valid column name: {ke}")
             except ValueError as ve:
+                # TODO Place these error messages on multiple lines with a multi-line string as they're a little long. 
                 print(f"ERROR: Invalid columns parameter. Use a list of valid column names formatted as strings, or a numerical interval formatted as a tuple e.g. (0,3): {ve}")
             except AttributeError as ae:
                 print(f"ERROR: Invalid columns parameter. Use a list of valid column names formatted as strings, or a numerical interval formatted as a tuple e.g. (0,3): {ae}")
@@ -53,6 +56,7 @@ class DataFrameInfo:
                 print(f"Unique values in {column}:", np.sort(self.df[column].unique()))
             except TypeError:
                 print(f"Unique values in {column}:", self.df[column].unique())
+
     def count_distinct_values(self, columns=None):
         subset = self.get_slice(columns)
         distinct_counts = pd.DataFrame({
@@ -61,9 +65,11 @@ class DataFrameInfo:
         })
         distinct_counts.set_index(['column'], inplace=True)
         return distinct_counts
+    
     def print_shape(self, columns=None):
         subset = self.get_slice(columns)
         print("DataFrame Shape:", subset.shape)
+
     def generate_null_counts(self, columns=None):
         subset = self.get_slice(columns)
         null_counts = subset.isnull().sum()
@@ -73,9 +79,12 @@ class DataFrameInfo:
             'null_percentage': null_percentages
         })
         return null_info
+    
     def extract_numeric_features(self):
+        # TODO Not spaces in keyword arguments
         numeric_features = self.df.select_dtypes(include = np.number)
         return numeric_features
+    
     def extract_categorical_features(self, numeric_features=None):
         if numeric_features is not None:
             categorical_features = [col for col in self.df.columns if col not in numeric_features]
@@ -84,6 +93,7 @@ class DataFrameInfo:
             numeric_features = self.extract_numeric_features()
             categorical_features = [col for col in self.df.columns if col not in numeric_features]
             return categorical_features
+        
     def print_summary_statistics(self, column_name):
             print(f"The mode of the distribution is {self.df[column_name].mode()[0]}")
             print(f"The mean of the distribution is {self.df[column_name].mean()}")
@@ -95,13 +105,34 @@ class DataTransform:
             self.df = dataframe.copy()
 
         def convert_to_type(self, column_name, data_type, ignore_errors = True):
+                # TODO Just over indented the method here 
                 data_type = data_type.lower()
+                # TODO You could move a lot of what is in the this method to a dictionary mapping of the function and datatypes
+                # it will keep your code cleaner but I really like the idea. 
+                # you could reduce the size of the this method but place the conversion part of the code in another method and calling it here.
+                # Just an example below.
+                # if ignore_errors == True:
+                #     error_statement = ["coerce", "ignore"]
+                # else:
+                #     error_statement = ["raise", "raise"]
+
+                # if data_type in ["datetime", "date"]:
+                #     self.df[column_name] = pd.to_datetime(self.df[column_name], errors=error_statement[0])
+                # elif data_type in ["str", "int", "float", "bool", "int64", "float64"]:
+                #     data_type = data_type.replace("64", "")
+                #     self.df[column_name] = self.df[column_name].astype(data_type, errors=error_statement[1])
+                # elif data_type == "categorical":
+                #     self.df[column_name] = pd.Categorical(self.df[column_name])
+                # else:
+                #        exception handling here
+                # There are other ways to do this with dictionaries as well but it should reduce the overall size of your method doing it this way
+                
                 if ignore_errors == True:
                     try:
                         if data_type == 'datetime':
-                            self.df[column_name] = pd.to_datetime(self.df[column_name], errors = 'coerce')
+                            self.df[column_name] = pd.to_datetime(self.df[column_name], errors='coerce')
                         elif data_type == 'date':
-                            self.df[column_name] = pd.to_datetime(self.df[column_name], errors = 'coerce')
+                            self.df[column_name] = pd.to_datetime(self.df[column_name], errors='coerce')
                         elif data_type == 'categorical':
                             self.df[column_name] = pd.Categorical(self.df[column_name])
                         elif data_type == 'str':
@@ -146,6 +177,7 @@ class DataTransform:
             try:
                 self.df[column_name] = self.df[column_name].astype(str)
                 self.df['month'] = self.df['month'].str.lower()
+                # NOTE I would actually move your mappings into a separate file here and import it just to keep it cleaner
                 month_map = {'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'june': 6,
                             'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12}
                 self.df[column_name] = self.df[column_name].map(month_map)
@@ -153,18 +185,24 @@ class DataTransform:
             except Exception as e:
                 print(f"Error converting 'month' column to period: {e}")
             return self.df.copy()
+        
         def convert_columns(self, column_list, data_type, ignore_errors=True):
             for column in column_list:
                 self.convert_to_type(column, data_type, ignore_errors)
             return self.df.copy()
+        
+        # TODO Over indentation in the below methods
+        # TODO Would probably just make the three imputation methods the same method but also fine to leave as is. 
         def impute_nulls_with_median(self, columns_list):
                 for column in columns_list:
                     self.df[column] = self.df[column].fillna(self.df[column].median())
                 return self.df
+        
         def impute_nulls_with_mean(self, columns_list):
                 for column in columns_list:
                     self.df[column] = self.df[column].fillna(self.df[column].mean())
                 return self.df
+        
         def impute_nulls_with_mode(self, columns_list):
                 for column in columns_list:
                     self.df[column] = self.df[column].fillna(self.df[column].mode()[0])
@@ -192,7 +230,8 @@ class DataTransform:
 class StatisticalTests(DataFrameInfo):
     def __init__(self, dataframe):
         self.df = dataframe.copy()
-        
+    # TODO I wouldn't call it column_1 and column_list here. Either use independent and dependant variables or use X, y
+    # NOTE Really lke the method though 
     def chi_square_test(self, column_1, column_list): # Only between categorical variables
         chi_sq_test_df = self.df.copy()
         chi_sq_test_df[column_1] = chi_sq_test_df[column_1].isnull()
@@ -218,9 +257,13 @@ class StatisticalTests(DataFrameInfo):
                 print(f"Chi-square test for missing values in {column_1} against {column} column: ")
                 print(f"p-value = {p}")
                 return p
+            
     def K2_test(self, column_name): # Test for normality in continuous variables
         stat, p = normaltest(self.df[column_name], nan_policy='omit')
         print('Statistics=%.3f, p=%.3f' % (stat, p))
+
+    # TODO I would move these method below into their own class as they're 
+    # related to removng outliers removing outliers. 
     def z_scores(self, column):
         mean_col = np.mean(self.df[column])
         std_col = np.std(self.df[column])
@@ -228,7 +271,7 @@ class StatisticalTests(DataFrameInfo):
         col_values = self.df[column].copy()
         col_values['z-scores'] = z_scores
         return col_values
-        
+    # TODO You could use this method inside the method below to get the Q1 and Q3 and get the best of both worlds. 
     def IQR(self, column_list):
         for col in column_list:
             Q1 = self.df[col].quantile(0.25)
@@ -239,7 +282,7 @@ class StatisticalTests(DataFrameInfo):
             print(f"Q1 (25th percentile): {Q1}")
             print(f"Q3 (75th percentile): {Q3}")
             print(f"IQR: {IQR}")
-            
+    # TODO space after self, 
     def IQR_outliers(self,column_list):
         for col in column_list:
             Q1 = self.df[col].quantile(0.25)
@@ -329,6 +372,7 @@ class Plotter(StatisticalTests):
         x=plt.xticks(rotation=90)
 
     def count_plots_grid(self, categorical_features):
+        # NOTE Try and avoid variables such as g, f, t make it more descriptive
         f = pd.melt(self.df, value_vars=categorical_features)
         g = sns.FacetGrid(f, col='variable',  col_wrap=3, sharex=False, sharey=False)
         g = g.map(self.count_plot, 'value')
