@@ -9,7 +9,10 @@ import matplotlib.style as style
 import seaborn as sns
 # NOTE Nice well ordered import statements here. Just remove the ones that aren't used.
 
+
 class DataFrameInfo:
+
+
     def __init__(self, dataframe):
         self.df = dataframe.copy()
 
@@ -20,7 +23,7 @@ class DataFrameInfo:
                 if isinstance(columns, list): # slice by column names
                     columns = [col.lower() for col in columns]
                     return self.df[columns]
-                elif isinstance(columns, str): #choose one column only, allows for string outside list
+                elif isinstance(columns, str): # choose one column only, allows for string outside list
                     columns = columns.lower()
                     return self.df[[columns]]
                 elif isinstance(columns, tuple) and len(columns) == 2 and all(isinstance(col, int) for col in columns):
@@ -30,25 +33,31 @@ class DataFrameInfo:
             # NOTE Great use of exception handling here very nice indeed
             except KeyError as ke:
                 print(f"KeyError: you need to provide a valid column name: {ke}")
-            except ValueError as ve:
-                # TODO Place these error messages on multiple lines with a multi-line string as they're a little long. 
-                print(f"ERROR: Invalid columns parameter. Use a list of valid column names formatted as strings, or a numerical interval formatted as a tuple e.g. (0,3): {ve}")
+            except ValueError as ve: 
+                print(f"ERROR: Invalid columns parameter. Use a list of valid column names formatted as strings, " \
+                      + f"or a numerical interval formatted as a tuple e.g. (0,3): {ve}")
             except AttributeError as ae:
-                print(f"ERROR: Invalid columns parameter. Use a list of valid column names formatted as strings, or a numerical interval formatted as a tuple e.g. (0,3): {ae}")
+                print(f"ERROR: Invalid columns parameter. Use a list of valid column names formatted as strings, " \
+                      f"or a numerical interval formatted as a tuple e.g. (0,3): {ae}")
         else:
             return self.df
+        
     def extract_column_names(self, columns=None):
         subset = self.get_slice(columns)
         return list(subset.columns)
+    
     def data_types_columns(self, columns=None):
         subset = self.get_slice(columns)
         return subset.dtypes
+    
     def info_columns(self, columns=None):
         subset = self.get_slice(columns)
         return subset.info()
+    
     def extract_statistical_values(self, columns=None):
         subset = self.get_slice(columns)
         return subset.describe()
+    
     def show_distinct_values(self,columns=None):
         subset = self.get_slice(columns)
         for column in subset:
@@ -81,8 +90,7 @@ class DataFrameInfo:
         return null_info
     
     def extract_numeric_features(self):
-        # TODO Not spaces in keyword arguments
-        numeric_features = self.df.select_dtypes(include = np.number)
+        numeric_features = self.df.select_dtypes(include=np.number)
         return numeric_features
     
     def extract_categorical_features(self, numeric_features=None):
@@ -101,78 +109,80 @@ class DataFrameInfo:
 
 
 class DataTransform:
+        
+
         def __init__(self, dataframe):
             self.df = dataframe.copy()
 
-        def convert_to_type(self, column_name, data_type, ignore_errors = True):
-                # TODO Just over indented the method here 
-                data_type = data_type.lower()
-                # TODO You could move a lot of what is in the this method to a dictionary mapping of the function and datatypes
-                # it will keep your code cleaner but I really like the idea. 
-                # you could reduce the size of the this method but place the conversion part of the code in another method and calling it here.
-                # Just an example below.
-                # if ignore_errors == True:
-                #     error_statement = ["coerce", "ignore"]
-                # else:
-                #     error_statement = ["raise", "raise"]
+        def convert_to_type(self, column_name, data_type, ignore_errors=True):
+            data_type = data_type.lower()
+            # TODO You could move a lot of what is in the this method to a dictionary mapping of the function and datatypes
+            # it will keep your code cleaner but I really like the idea. 
+            # you could reduce the size of the this method but place the conversion part of the code in another method and calling it here.
+            # Just an example below.
+            # if ignore_errors == True:
+            #     error_statement = ["coerce", "ignore"]
+            # else:
+            #     error_statement = ["raise", "raise"]
 
-                # if data_type in ["datetime", "date"]:
-                #     self.df[column_name] = pd.to_datetime(self.df[column_name], errors=error_statement[0])
-                # elif data_type in ["str", "int", "float", "bool", "int64", "float64"]:
-                #     data_type = data_type.replace("64", "")
-                #     self.df[column_name] = self.df[column_name].astype(data_type, errors=error_statement[1])
-                # elif data_type == "categorical":
-                #     self.df[column_name] = pd.Categorical(self.df[column_name])
-                # else:
-                #        exception handling here
-                # There are other ways to do this with dictionaries as well but it should reduce the overall size of your method doing it this way
-                
-                if ignore_errors == True:
-                    try:
-                        if data_type == 'datetime':
-                            self.df[column_name] = pd.to_datetime(self.df[column_name], errors='coerce')
-                        elif data_type == 'date':
-                            self.df[column_name] = pd.to_datetime(self.df[column_name], errors='coerce')
-                        elif data_type == 'categorical':
-                            self.df[column_name] = pd.Categorical(self.df[column_name])
-                        elif data_type == 'str':
-                            self.df[column_name] = self.df[column_name].astype(str, errors='ignore')
-                        elif data_type == 'float' or data_type == 'float64':
-                            self.df[column_name] = self.df[column_name].astype(float, errors='ignore')
-                        elif data_type == 'int' or data_type == 'int64':
-                            self.df[column_name] = self.df[column_name].astype(int, errors='ignore')
-                        elif data_type == 'bool':
-                            self.df[column_name] = self.df[column_name].astype(bool, errors='ignore')
-                        else:
-                            print(f"Error: data type {data_type} not supported. Check docstrings or call help for more information.")
-                    except Exception as e:
+            # if data_type in ["datetime", "date"]:
+            #     self.df[column_name] = pd.to_datetime(self.df[column_name], errors=error_statement[0])
+            # elif data_type in ["str", "int", "float", "bool", "int64", "float64"]:
+            #     data_type = data_type.replace("64", "")
+            #     self.df[column_name] = self.df[column_name].astype(data_type, errors=error_statement[1])
+            # elif data_type == "categorical":
+            #     self.df[column_name] = pd.Categorical(self.df[column_name])
+            # else:
+            #        exception handling here
+            # There are other ways to do this with dictionaries as well but it should reduce the overall size of your method doing it this way
+            
+            if ignore_errors == True:
+                try:
+                    if data_type == 'datetime':
+                        self.df[column_name] = pd.to_datetime(self.df[column_name], errors='coerce')
+                    elif data_type == 'date':
+                        self.df[column_name] = pd.to_datetime(self.df[column_name], errors='coerce')
+                    elif data_type == 'categorical':
+                        self.df[column_name] = pd.Categorical(self.df[column_name])
+                    elif data_type == 'str':
+                        self.df[column_name] = self.df[column_name].astype(str, errors='ignore')
+                    elif data_type == 'float' or data_type == 'float64':
+                        self.df[column_name] = self.df[column_name].astype(float, errors='ignore')
+                    elif data_type == 'int' or data_type == 'int64':
+                        self.df[column_name] = self.df[column_name].astype(int, errors='ignore')
+                    elif data_type == 'bool':
+                        self.df[column_name] = self.df[column_name].astype(bool, errors='ignore')
+                    else:
+                        print(f"Error: data type {data_type} not supported. Check docstrings or call help for more information.")
+                except Exception as e:
+                    print(f"Error converting column '{column_name}' to type '{data_type}': {e}")
+                return self.df.copy()
+            elif ignore_errors == False:
+                try:
+                    if data_type == 'datetime':
+                        self.df[column_name] = pd.to_datetime(self.df[column_name])
+                    elif data_type == 'date':
+                        self.df[column_name] = pd.to_datetime(self.df[column_name])
+                    elif data_type == 'timedelta':
+                        self.df[column_name] = pd.to_timedelta(self.df[column_name])
+                    elif data_type == 'categorical':
+                        self.df[column_name] = pd.Categorical(self.df[column_name])
+                    elif data_type == 'str':
+                        self.df[column_name] = self.df[column_name].astype(str)
+                    elif data_type == 'float' or data_type == 'float64':
+                        self.df[column_name] = self.df[column_name].astype(float)
+                    elif data_type == 'int' or data_type == 'int64':
+                        self.df[column_name] = self.df[column_name].astype(int)
+                    elif data_type == 'bool':
+                        self.df[column_name] = self.df[column_name].astype(bool)
+                    else:
                         print(f"Error converting column '{column_name}' to type '{data_type}': {e}")
-                    return self.df.copy()
-                elif ignore_errors == False:
-                    try:
-                        if data_type == 'datetime':
-                            self.df[column_name] = pd.to_datetime(self.df[column_name])
-                        elif data_type == 'date':
-                            self.df[column_name] = pd.to_datetime(self.df[column_name])
-                        elif data_type == 'timedelta':
-                            self.df[column_name] = pd.to_timedelta(self.df[column_name])
-                        elif data_type == 'categorical':
-                            self.df[column_name] = pd.Categorical(self.df[column_name])
-                        elif data_type == 'str':
-                            self.df[column_name] = self.df[column_name].astype(str)
-                        elif data_type == 'float' or data_type == 'float64':
-                            self.df[column_name] = self.df[column_name].astype(float)
-                        elif data_type == 'int' or data_type == 'int64':
-                            self.df[column_name] = self.df[column_name].astype(int)
-                        elif data_type == 'bool':
-                            self.df[column_name] = self.df[column_name].astype(bool)
-                        else:
-                            print(f"Error converting column '{column_name}' to type '{data_type}': {e}")
-                    except Exception as e:
-                        print(f"Error converting column '{column_name}' to type '{data_type}': {e}")
-                    return self.df.copy()
-                else:
-                    print("Error: the parameter 'ignore_errors' is a bool and can only be True or False.")
+                except Exception as e:
+                    print(f"Error converting column '{column_name}' to type '{data_type}': {e}")
+                return self.df.copy()
+            else:
+                print("Error: the parameter 'ignore_errors' is a bool and can only be True or False.")
+
         def convert_month_to_period(self, column_name):
             try:
                 self.df[column_name] = self.df[column_name].astype(str)
@@ -191,22 +201,21 @@ class DataTransform:
                 self.convert_to_type(column, data_type, ignore_errors)
             return self.df.copy()
         
-        # TODO Over indentation in the below methods
         # TODO Would probably just make the three imputation methods the same method but also fine to leave as is. 
         def impute_nulls_with_median(self, columns_list):
-                for column in columns_list:
-                    self.df[column] = self.df[column].fillna(self.df[column].median())
-                return self.df
+            for column in columns_list:
+                self.df[column] = self.df[column].fillna(self.df[column].median())
+            return self.df
         
         def impute_nulls_with_mean(self, columns_list):
-                for column in columns_list:
-                    self.df[column] = self.df[column].fillna(self.df[column].mean())
-                return self.df
+            for column in columns_list:
+                self.df[column] = self.df[column].fillna(self.df[column].mean())
+            return self.df
         
         def impute_nulls_with_mode(self, columns_list):
-                for column in columns_list:
-                    self.df[column] = self.df[column].fillna(self.df[column].mode()[0])
-                return self.df
+            for column in columns_list:
+                self.df[column] = self.df[column].fillna(self.df[column].mode()[0])
+            return self.df
 
         def log_transform(self, column_list):
             for col in column_list:
@@ -228,10 +237,13 @@ class DataTransform:
 
             
 class StatisticalTests(DataFrameInfo):
+
+
     def __init__(self, dataframe):
         self.df = dataframe.copy()
     # TODO I wouldn't call it column_1 and column_list here. Either use independent and dependant variables or use X, y
     # NOTE Really lke the method though 
+        
     def chi_square_test(self, column_1, column_list): # Only between categorical variables
         chi_sq_test_df = self.df.copy()
         chi_sq_test_df[column_1] = chi_sq_test_df[column_1].isnull()
@@ -271,6 +283,7 @@ class StatisticalTests(DataFrameInfo):
         col_values = self.df[column].copy()
         col_values['z-scores'] = z_scores
         return col_values
+    
     # TODO You could use this method inside the method below to get the Q1 and Q3 and get the best of both worlds. 
     def IQR(self, column_list):
         for col in column_list:
@@ -282,8 +295,8 @@ class StatisticalTests(DataFrameInfo):
             print(f"Q1 (25th percentile): {Q1}")
             print(f"Q3 (75th percentile): {Q3}")
             print(f"IQR: {IQR}")
-    # TODO space after self, 
-    def IQR_outliers(self,column_list):
+    
+    def IQR_outliers(self, column_list):
         for col in column_list:
             Q1 = self.df[col].quantile(0.25)
             Q3 = self.df[col].quantile(0.75)
@@ -298,8 +311,9 @@ class StatisticalTests(DataFrameInfo):
             print(outliers.shape)
 
 
-
 class Plotter(StatisticalTests):
+
+
     def __init__(self,dataframe):
         self.df = dataframe.copy()
         
@@ -328,8 +342,8 @@ class Plotter(StatisticalTests):
         sns.heatmap(self.df[column_list].corr(), annot=True, cmap='coolwarm')
 
     def correlation_matrix_df(self):
-        corr = self.df.select_dtypes(include = np.number).corr()
-        mask = np.zeros_like(corr, dtype=np.bool_)
+        corr = self.df.select_dtypes(include=np.number).corr()
+        mask = np.zeros_like(corr, dtype=np.bool)
         mask[np.triu_indices_from(mask)] = True
         # set thins up for plotting
         cmap = sns.diverging_palette(220, 10, as_cmap=True)
