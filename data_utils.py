@@ -1,6 +1,7 @@
 from scipy import stats
 from scipy.stats import chi2_contingency, normaltest
 from statsmodels.graphics.gofplots import qqplot
+from typing import Optional, List
 import missingno as msno
 import numpy as np
 import pandas as pd
@@ -11,12 +12,52 @@ import seaborn as sns
 
 
 class DataFrameInfo:
+    """
+    Initialize the DataFrameInfo object with a DataFrame.
 
+    Parameters:
+    - dataframe (pd.DataFrame): The DataFrame to analyze.
 
-    def __init__(self, dataframe):
+    """
+
+    def __init__(self, dataframe: pd.DataFrame):
+        """
+        Initialize the DataFrameInfo object with a DataFrame.
+
+        Parameters:
+        - dataframe (pd.DataFrame): The DataFrame to analyze.
+
+        """
         self.df = dataframe.copy()
 
-    def get_slice(self, columns=None):
+    def get_slice(self, columns=None) -> pd.DataFrame:
+        """
+        Get a subset of the DataFrame based on specified columns.
+
+        Parameters:
+        - columns: Columns to include in the subset. Can be provided as 
+                   a list of column names formatted as string,
+                   as a string if only one column is chosen, 
+                   or as a tuple or two integers indicating the positions of the columns in the dataframe.
+                   If a tuple is provided, the counting starts from zero. 
+                   The second integer in the tuple is inclusive (see examples below). 
+
+        Returns:
+        - pd.DataFrame: A subset of the DataFrame. Returns the full DataFrame if columns=None
+
+        Examples:
+        ```
+        # Returns columns named 'column1' and 'column2':
+        subset = df_info.get_slice(['column1', 'column2']) 
+
+        # Returns column named 'column1' only
+        subset = df_info.get_slice('column1') 
+
+        # Returns the first three columns of the dataframe (column with index 2 is included)
+        subset = df_info.get_slice((0,2)) 
+        ```
+
+        """
         # NOTE Like this slicing feature to analyse subsets of the data really nice
         if columns is not None:
             try:
@@ -42,23 +83,97 @@ class DataFrameInfo:
         else:
             return self.df
         
-    def extract_column_names(self, columns=None):
+    def extract_column_names(self, columns=None) -> List[str]:
+        """
+        Extract column names from a subset of the DataFrame.
+
+        Parameters:
+        - columns: Columns to include in the subset. 
+        See docs for get_slice method for the requirements of the 'columns' parameter > help(get_slice)
+
+        Returns:
+        - List[str]: List of column names.
+
+        Example:
+        ```
+        column_names = df_info.extract_column_names(['column1', 'column2'])
+        ```
+
+        """
         subset = self.get_slice(columns)
         return list(subset.columns)
     
-    def data_types_columns(self, columns=None):
+    def data_types_columns(self, columns=None) -> pd.Series:
+        """
+        Get data types of columns in a subset of the DataFrame.
+
+        Parameters:
+        - columns: Columns to include in the subset.
+        See docs for get_slice method for the requirements of the 'columns' parameter > help(get_slice)
+
+        Returns:
+        - pd.Series: Data types of columns.
+
+        Example:
+        ```
+        dtypes = df_info.data_types_columns(['column1', 'column2'])
+        ```
+
+        """
         subset = self.get_slice(columns)
         return subset.dtypes
     
-    def info_columns(self, columns=None):
+    def info_columns(self, columns=None) -> None:
+        """
+        Display concise information about columns in a subset of the DataFrame.
+
+        Parameters:
+        - columns: Columns to include in the subset.
+        See docs for get_slice method for the requirements of the 'columns' parameter > help(get_slice)
+
+        Example:
+        ```
+        df_info.info_columns(['column1', 'column2'])
+        ```
+
+        """
         subset = self.get_slice(columns)
         return subset.info()
     
-    def extract_statistical_values(self, columns=None):
+    def extract_statistical_values(self, columns=None) -> pd.DataFrame:
+        """
+        Extract statistical values from columns in a subset of the DataFrame.
+
+        Parameters:
+        - columns: Columns to include in the subset.
+        See docs for get_slice method for the requirements of the 'columns' parameter > help(get_slice)
+
+        Returns:
+        - pd.DataFrame: Statistical values of columns.
+
+        Example:
+        ```
+        stats = df_info.extract_statistical_values(['column1', 'column2'])
+        ```
+
+        """
         subset = self.get_slice(columns)
         return subset.describe()
     
-    def show_distinct_values(self,columns=None):
+    def show_distinct_values(self,columns=None) -> None:
+        """
+        Display distinct values in columns of a subset of the DataFrame.
+
+        Parameters:
+        - columns: Columns to include in the subset.
+        See docs for get_slice method for the requirements of the 'columns' parameter > help(get_slice)
+
+        Example:
+        ```
+        df_info.show_distinct_values(['column1', 'column2'])
+        ```
+
+        """
         subset = self.get_slice(columns)
         for column in subset:
             try:
@@ -66,7 +181,23 @@ class DataFrameInfo:
             except TypeError:
                 print(f"Unique values in {column}:", self.df[column].unique())
 
-    def count_distinct_values(self, columns=None):
+    def count_distinct_values(self, columns=None) -> pd.DataFrame:
+        """
+        Count distinct values in columns of a subset of the DataFrame.
+
+        Parameters:
+        - columns: Columns to include in the subset.
+        See docs for get_slice method for the requirements of the 'columns' parameter > help(get_slice)
+
+        Returns:
+        - pd.DataFrame: Count of distinct values in columns.
+
+        Example:
+        ```
+        counts = df_info.count_distinct_values(['column1', 'column2'])
+        ```
+
+        """
         subset = self.get_slice(columns)
         distinct_counts = pd.DataFrame({
             'column': subset.columns,
@@ -75,11 +206,40 @@ class DataFrameInfo:
         distinct_counts.set_index(['column'], inplace=True)
         return distinct_counts
     
-    def print_shape(self, columns=None):
+    def print_shape(self, columns=None) -> None:
+        """
+        Print the shape of a subset of the DataFrame.
+
+        Parameters:
+        - columns: Columns to include in the subset.
+        See docs for get_slice method for the requirements of the 'columns' parameter > help(get_slice)
+
+        Example:
+        ```
+        df_info.print_shape(['column1', 'column2'])
+        ```
+
+        """
         subset = self.get_slice(columns)
         print("DataFrame Shape:", subset.shape)
 
-    def generate_null_counts(self, columns=None):
+    def generate_null_counts(self, columns=None) -> pd.DataFrame:
+        """
+        Generate null counts and percentages in columns of a subset of the DataFrame.
+
+        Parameters:
+        - columns: Columns to include in the subset.
+        See docs for get_slice method for the requirements of the 'columns' parameter > help(get_slice)
+
+        Returns:
+        - pd.DataFrame: Null counts and percentages in columns.
+
+        Example:
+        ```
+        null_info = df_info.generate_null_counts(['column1', 'column2'])
+        ```
+
+        """
         subset = self.get_slice(columns)
         null_counts = subset.isnull().sum()
         null_percentages = (null_counts / len(subset)) * 100
@@ -89,11 +249,38 @@ class DataFrameInfo:
         })
         return null_info
     
-    def extract_numeric_features(self):
+    def extract_numeric_features(self) -> pd.DataFrame:
+        """
+        Extract numeric features from the DataFrame.
+
+        Returns:
+        - pd.DataFrame: Numeric features.
+
+        Example:
+        ```
+        numeric_features = df_info.extract_numeric_features()
+        ```
+
+        """
         numeric_features = self.df.select_dtypes(include=np.number)
         return numeric_features
     
-    def extract_categorical_features(self, numeric_features=None):
+    def extract_categorical_features(self, numeric_features: Optional[List[str]] = None) -> List[str]:
+        """
+        Extract categorical features from the DataFrame.
+
+        Parameters:
+        - numeric_features (Optional[List[str]]): List of numeric features (if already extracted).
+
+        Returns:
+        - List[str]: Categorical features.
+
+        Example:
+        ```
+        categorical_features = df_info.extract_categorical_features(numeric_features=['num1', 'num2'])
+        ```
+
+        """
         if numeric_features is not None:
             categorical_features = [col for col in self.df.columns if col not in numeric_features]
             return categorical_features
@@ -102,10 +289,22 @@ class DataFrameInfo:
             categorical_features = [col for col in self.df.columns if col not in numeric_features]
             return categorical_features
         
-    def print_summary_statistics(self, column_name):
-            print(f"The mode of the distribution is {self.df[column_name].mode()[0]}")
-            print(f"The mean of the distribution is {self.df[column_name].mean()}")
-            print(f"The median of the distribution is {self.df[column_name].median()}")
+    def print_summary_statistics(self, column_name: str) -> None:
+        """
+        Print summary statistics for a specific column.
+
+        Parameters:
+        - column_name (str): Name of the column.
+
+        Example:
+        ```
+        df_info.print_summary_statistics('column1')
+        ```
+
+        """
+        print(f"The mode of the distribution is {self.df[column_name].mode()[0]}")
+        print(f"The mean of the distribution is {self.df[column_name].mean()}")
+        print(f"The median of the distribution is {self.df[column_name].median()}")
 
 
 class DataTransform:
@@ -116,72 +315,29 @@ class DataTransform:
 
         def convert_to_type(self, column_name, data_type, ignore_errors=True):
             data_type = data_type.lower()
+            if ignore_errors == True:
+                error_statement = ["coerce", "ignore"]
+            elif ignore_errors == False:
+                error_statement = ["raise", "raise"]
+            else:
+                print("Error: the parameter 'ignore_errors' is a bool and can only be True or False.")
+            # Convert column to datatype:
+            try:
+                if data_type in ["datetime", "date"]:
+                    self.df[column_name] = pd.to_datetime(self.df[column_name], errors=error_statement[0])
+                elif data_type in ["str", "int", "float", "bool", "int64", "float64"]:
+                    data_type = data_type.replace("64", "")
+                    self.df[column_name] = self.df[column_name].astype(data_type, errors=error_statement[1])
+                elif data_type == "categorical":
+                    self.df[column_name] = pd.Categorical(self.df[column_name])
+                else:
+                    print(f"Error: data type {data_type} not supported. Check docstrings or call help for more information.")
+            except Exception as e:
+                print(f"Error converting column '{column_name}' to type '{data_type}': {e}")
             # TODO You could move a lot of what is in the this method to a dictionary mapping of the function and datatypes
             # it will keep your code cleaner but I really like the idea. 
             # you could reduce the size of the this method but place the conversion part of the code in another method and calling it here.
-            # Just an example below.
-            # if ignore_errors == True:
-            #     error_statement = ["coerce", "ignore"]
-            # else:
-            #     error_statement = ["raise", "raise"]
-
-            # if data_type in ["datetime", "date"]:
-            #     self.df[column_name] = pd.to_datetime(self.df[column_name], errors=error_statement[0])
-            # elif data_type in ["str", "int", "float", "bool", "int64", "float64"]:
-            #     data_type = data_type.replace("64", "")
-            #     self.df[column_name] = self.df[column_name].astype(data_type, errors=error_statement[1])
-            # elif data_type == "categorical":
-            #     self.df[column_name] = pd.Categorical(self.df[column_name])
-            # else:
-            #        exception handling here
             # There are other ways to do this with dictionaries as well but it should reduce the overall size of your method doing it this way
-            
-            if ignore_errors == True:
-                try:
-                    if data_type == 'datetime':
-                        self.df[column_name] = pd.to_datetime(self.df[column_name], errors='coerce')
-                    elif data_type == 'date':
-                        self.df[column_name] = pd.to_datetime(self.df[column_name], errors='coerce')
-                    elif data_type == 'categorical':
-                        self.df[column_name] = pd.Categorical(self.df[column_name])
-                    elif data_type == 'str':
-                        self.df[column_name] = self.df[column_name].astype(str, errors='ignore')
-                    elif data_type == 'float' or data_type == 'float64':
-                        self.df[column_name] = self.df[column_name].astype(float, errors='ignore')
-                    elif data_type == 'int' or data_type == 'int64':
-                        self.df[column_name] = self.df[column_name].astype(int, errors='ignore')
-                    elif data_type == 'bool':
-                        self.df[column_name] = self.df[column_name].astype(bool, errors='ignore')
-                    else:
-                        print(f"Error: data type {data_type} not supported. Check docstrings or call help for more information.")
-                except Exception as e:
-                    print(f"Error converting column '{column_name}' to type '{data_type}': {e}")
-                return self.df.copy()
-            elif ignore_errors == False:
-                try:
-                    if data_type == 'datetime':
-                        self.df[column_name] = pd.to_datetime(self.df[column_name])
-                    elif data_type == 'date':
-                        self.df[column_name] = pd.to_datetime(self.df[column_name])
-                    elif data_type == 'timedelta':
-                        self.df[column_name] = pd.to_timedelta(self.df[column_name])
-                    elif data_type == 'categorical':
-                        self.df[column_name] = pd.Categorical(self.df[column_name])
-                    elif data_type == 'str':
-                        self.df[column_name] = self.df[column_name].astype(str)
-                    elif data_type == 'float' or data_type == 'float64':
-                        self.df[column_name] = self.df[column_name].astype(float)
-                    elif data_type == 'int' or data_type == 'int64':
-                        self.df[column_name] = self.df[column_name].astype(int)
-                    elif data_type == 'bool':
-                        self.df[column_name] = self.df[column_name].astype(bool)
-                    else:
-                        print(f"Error converting column '{column_name}' to type '{data_type}': {e}")
-                except Exception as e:
-                    print(f"Error converting column '{column_name}' to type '{data_type}': {e}")
-                return self.df.copy()
-            else:
-                print("Error: the parameter 'ignore_errors' is a bool and can only be True or False.")
 
         def convert_month_to_period(self, column_name):
             try:
@@ -201,19 +357,54 @@ class DataTransform:
                 self.convert_to_type(column, data_type, ignore_errors)
             return self.df.copy()
         
-        # TODO Would probably just make the three imputation methods the same method but also fine to leave as is. 
-        def impute_nulls_with_median(self, columns_list):
-            for column in columns_list:
+        def impute_nulls(self, column_list: List[str], method: str) -> pd.DataFrame:
+            """
+            Impute null values in specified columns using a specified method.
+
+            Parameters:
+            - column_list (List[str]): List of column names to impute null values.
+            - method (str): Imputation method ('mean', 'median', or 'mode').
+
+            Returns:
+            - pd.DataFrame: A copy of the DataFrame with null values imputed.
+
+            Example:
+            ```
+            df = your_instance.impute_nulls(['column1', 'column2'], 'mean')
+            ```
+
+            """
+            method = method.lower()
+            valid_methods = ['mean', 'median', 'mode']
+
+            try:
+                if method not in valid_methods:
+                    raise ValueError(f"Invalid imputation method. Method can only be one of: {', '.join(valid_methods)}")
+
+                for column in column_list:
+                    if method == 'median':
+                        self.df[column] = self.df[column].fillna(self.df[column].median())
+                    elif method == 'mean':
+                        self.df[column] = self.df[column].fillna(self.df[column].mean())
+                    elif method == 'mode':
+                        self.df[column] = self.df[column].fillna(self.df[column].mode()[0])
+
+            except ValueError as ve:
+                print(f"Error: {ve}. Please check that you have provided a list of column names formatted as strings.")
+            return self.df.copy()
+
+        def impute_nulls_with_median(self, column_list):
+            for column in column_list:
                 self.df[column] = self.df[column].fillna(self.df[column].median())
             return self.df
         
-        def impute_nulls_with_mean(self, columns_list):
-            for column in columns_list:
+        def impute_nulls_with_mean(self, column_list):
+            for column in column_list:
                 self.df[column] = self.df[column].fillna(self.df[column].mean())
             return self.df
         
-        def impute_nulls_with_mode(self, columns_list):
-            for column in columns_list:
+        def impute_nulls_with_mode(self, column_list):
+            for column in column_list:
                 self.df[column] = self.df[column].fillna(self.df[column].mode()[0])
             return self.df
 
@@ -241,9 +432,9 @@ class StatisticalTests(DataFrameInfo):
 
     def __init__(self, dataframe):
         self.df = dataframe.copy()
+
     # TODO I wouldn't call it column_1 and column_list here. Either use independent and dependant variables or use X, y
     # NOTE Really lke the method though 
-        
     def chi_square_test(self, column_1, column_list): # Only between categorical variables
         chi_sq_test_df = self.df.copy()
         chi_sq_test_df[column_1] = chi_sq_test_df[column_1].isnull()
