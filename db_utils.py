@@ -30,7 +30,7 @@ def load_credentials(file_path: str) -> Dict:
                 raise ValueError("Failed to load credentials. YAML file is empty or malformed.")
             return credentials
         except yaml.YAMLError as e:
-            raise ValueError(f"Error in parsing YAML file: {e}")
+            print(f"Error in parsing YAML file: {e}")
     
  
 class RDSDatabaseConnector:
@@ -130,7 +130,7 @@ class RDSDatabaseConnector:
                 df = pd.DataFrame(data, columns=columns)
                 return df
             except exc.SQLAlchemyError as e:
-                raise exc.SQLAlchemyError(f"Error in executing database query: {e}")
+                print(f"Error in executing database query: {e}")
         
 
 def save_df_to_csv(df: pd.DataFrame, file_name: str, destination_folder: Optional[str] = None) -> None:
