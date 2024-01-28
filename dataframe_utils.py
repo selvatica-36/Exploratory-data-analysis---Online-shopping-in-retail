@@ -656,7 +656,7 @@ class StatisticalTests(DataFrameInfo):
         print('Statistics=%.3f, p=%.3f' % (stat, p))
 
 
-class OutlierRemoval:
+class OutlierDetector:
     """
     A class for performing outlier removal operations on a DataFrame.
     """
@@ -795,7 +795,8 @@ class Plotter(StatisticalTests):
         figure.legend()
             
 
-    
+if __name__ == '__main__':
+    print('This script contains classes to explore, transform and analyse pandas dataframes.')
     
 
 
