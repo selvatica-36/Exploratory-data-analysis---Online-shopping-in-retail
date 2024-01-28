@@ -1,4 +1,4 @@
-from info_extractor import DataFrameInfo
+from scripts.info_extractor import DataFrameInfo
 from scipy.stats import chi2_contingency, normaltest
 from typing import List, Tuple
 import math
