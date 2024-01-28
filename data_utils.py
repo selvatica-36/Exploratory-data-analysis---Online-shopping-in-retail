@@ -1,6 +1,7 @@
 from scipy import stats
 from scipy.stats import chi2_contingency, normaltest
 from statsmodels.graphics.gofplots import qqplot
+from tabulate import tabulate
 from typing import Optional, List
 import missingno as msno
 import numpy as np
@@ -303,6 +304,30 @@ class DataFrameInfo:
         print(f"The mode of the distribution is {self.df[column_name].mode()[0]}")
         print(f"The mean of the distribution is {self.df[column_name].mean()}")
         print(f"The median of the distribution is {self.df[column_name].median()}")
+    
+    def data_skewness_values(self, columns: List[str]) -> None:
+        """
+        Calculate and display skewness values for specified columns in the DataFrame.
+
+        Parameters:
+        - columns (List[str]): List of column names to calculate skewness for.
+
+        Returns:
+        - None: The method prints the skewness values in a tabulated format.
+
+        Example:
+        ```
+        your_instance.data_skewness_values(['column1', 'column2', 'column3'])
+        ```
+
+        """
+        skew_data = []
+        for col in columns:
+            skew_value = self.df[col].skew()
+            skew_data.append([col, skew_value])
+        
+        print(tabulate(skew_data, headers=[
+              "Column", "Skewness"], tablefmt="pretty"))
 
 
 class DataTransform:
@@ -588,7 +613,7 @@ class StatisticalTests(DataFrameInfo):
         self.df = dataframe.copy()
 
     # NOTE Really like the method though 
-    def chi_square_test(self, independent_variable, dependant_variables):
+    def chi_square_test(self, independent_variable: str, dependant_variables: List[str]) -> float:
         """
         Perform chi-square test between two categorical variables.
 
@@ -644,7 +669,7 @@ class OutlierRemoval:
         col_values['z-scores'] = z_scores
         return col_values
     
-    # TODO You could use this method inside the method below to get the Q1 and Q3 and get the best of both worlds. 
+    # TODO You could use the IQR method inside the method below (IQR_outliers) to get the Q1 and Q3 and get the best of both worlds. 
     def IQR(self, column_list):
         for col in column_list:
             Q1 = self.df[col].quantile(0.25)
