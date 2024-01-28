@@ -58,7 +58,7 @@ class StatisticalTests(DataFrameInfo):
                 print(f"p-value = {p}")
                 return p
             
-    def K2_test(self, column_name: str) -> None:
+    def agostino_K2_test(self, column_name: str) -> None:
         """
         Perform D'Agostino's K^2 normality test on a continuous variable.
 
