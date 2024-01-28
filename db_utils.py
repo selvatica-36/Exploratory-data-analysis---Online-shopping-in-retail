@@ -38,7 +38,6 @@ class RDSDatabaseConnector:
     A class for connecting to and interacting with a PostgreSQL database on Amazon's AWS RDS.
     """
 
-
     def __init__(self, credentials: Dict) -> None:
         """
         Initialize the RDSDatabaseConnector.
@@ -51,10 +50,10 @@ class RDSDatabaseConnector:
         connector = RDSDatabaseConnector(credentials)
         ```
         """
-        self.credentials = credentials
-        self.engine = self.initialise_engine()
+        self.__credentials = credentials
+        self.engine = self.__initialise_engine()
         
-    def initialise_engine(self):
+    def __initialise_engine(self):
         """
         Initialize the SQLAlchemy engine for database connection.
 
@@ -66,9 +65,12 @@ class RDSDatabaseConnector:
         engine = connector.initialize_engine()
         ```
         """
-        db_url =  f"postgresql://{self.credentials['RDS_USER']}:{self.credentials['RDS_PASSWORD']}@" \
-        + f"{self.credentials['RDS_HOST']}:{self.credentials['RDS_PORT']}/" \
-        + f"{self.credentials['RDS_DATABASE']}"
+        print("***************************")
+        print("Attempting to connect to SQL RDS database...")
+        db_url =  f"postgresql://{self.__credentials['RDS_USER']}:{self.__credentials['RDS_PASSWORD']}@" \
+        + f"{self.__credentials['RDS_HOST']}:{self.__credentials['RDS_PORT']}/" \
+        + f"{self.__credentials['RDS_DATABASE']}"
+        print("Engine successfully created.")
         return create_engine(db_url)
         
     def connect(self):
@@ -83,7 +85,9 @@ class RDSDatabaseConnector:
         connection = connector.connect()
         ```
         """
-        return self.engine.connect()
+        connection = self.engine.connect()
+        print("Connected successfully.")
+        return connection
     
     def close(self) -> None:
         """
@@ -98,9 +102,9 @@ class RDSDatabaseConnector:
             self.engine.dispose()
             print("Database connection closed.")
  
-    def fetch_data_to_df(self, table_name: Optional[str] = None, sql_query: Optional[str] = None) -> pd.DataFrame:
+    def extract_RDS_to_dataframe(self, table_name: Optional[str] = None, sql_query: Optional[str] = None) -> pd.DataFrame:
         """
-        Fetch data from the database and return it as a Pandas DataFrame.
+        Fetch data from the AWS RDS database and return it as a Pandas DataFrame.
 
         Parameters:
         - table_name (str, optional): The name of the table to fetch data from.
@@ -141,7 +145,7 @@ def save_df_to_csv(df: pd.DataFrame, file_name: str, destination_folder: Optiona
     - df (pd.DataFrame): The DataFrame to be saved.
     - file_name (str): The name of the CSV file.
     - destination_folder (str, optional): The folder path where the CSV file will be saved.
-      If not provided, the file will be saved in the current working directory.
+    If not provided, the file will be saved in the current working directory.
 
     Example:
     ```
@@ -164,7 +168,7 @@ if __name__ == '__main__':
     print(my_credentials)
     database_connector = RDSDatabaseConnector(my_credentials)
     table_name = 'customer_activity'
-    customer_activity_df = database_connector.fetch_data_to_df(table_name)
+    customer_activity_df = database_connector.extract_RDS_to_dataframe(table_name)
     print(type(customer_activity_df))
     print(customer_activity_df.shape)
     csv_file_name = 'customer_activity.csv'
