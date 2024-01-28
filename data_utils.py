@@ -6,14 +6,12 @@ import missingno as msno
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.style as style
 import seaborn as sns
-# NOTE Nice well ordered import statements here. Just remove the ones that aren't used.
 
 
 class DataFrameInfo:
     """
-    Initialize the DataFrameInfo object with a DataFrame.
+    Initialize the DataFrameInfo object with a DataFrame. Used internally when an instance of the call is called.
 
     Parameters:
     - dataframe (pd.DataFrame): The DataFrame to analyze.
@@ -308,123 +306,279 @@ class DataFrameInfo:
 
 
 class DataTransform:
-        
+    """
+    A class for performing various transformations on a DataFrame.
 
-        def __init__(self, dataframe):
-            self.df = dataframe.copy()
+    Parameters:
+    - dataframe (pd.DataFrame): The DataFrame to transform.
 
-        def convert_to_type(self, column_name, data_type, ignore_errors=True):
-            data_type = data_type.lower()
-            if ignore_errors == True:
-                error_statement = ["coerce", "ignore"]
-            elif ignore_errors == False:
-                error_statement = ["raise", "raise"]
+    Example:
+    ```
+    transformer = DataTransform(my_dataframe)
+    ```
+
+    """    
+    def __init__(self, dataframe: pd.DataFrame):
+        """
+        Initialize the DataTransform object with a DataFrame. Used internally when an instance of the call is called.
+
+        Parameters:
+        - dataframe (pd.DataFrame): The DataFrame to transform.
+
+        """
+        self.df = dataframe.copy()
+
+    def convert_to_type(self, column_name: str, data_type: str, ignore_errors: bool = True) -> pd.DataFrame:
+        """
+        Convert a column to the specified data type.
+
+        Parameters:
+        - column_name (str): Name of the column to convert.
+        - data_type (str): Target data type ('datetime', 'date', 'str', 'int', 'float', 'bool', 'int64', 'float64', 'categorical').
+        - ignore_errors (bool, optional): Whether to ignore errors during conversion. Default is True.
+
+        Returns:
+        - pd.DataFrame: Transformed DataFrame.
+
+        Example:
+        ```
+        transformed_df = transformer.convert_to_type('column1', 'int', ignore_errors=True)
+        ```
+        """
+        data_type = data_type.lower()
+        if ignore_errors == True:
+            error_statement = ["coerce", "ignore"]
+        elif ignore_errors == False:
+            error_statement = ["raise", "raise"]
+        else:
+            print("Error: the parameter 'ignore_errors' is a bool and can only be True or False.")
+        # Convert column to datatype:
+        try:
+            if data_type in ["datetime", "date"]:
+                self.df[column_name] = pd.to_datetime(self.df[column_name], errors=error_statement[0])
+            elif data_type in ["str", "int", "float", "bool", "int64", "float64"]:
+                data_type = data_type.replace("64", "")
+                self.df[column_name] = self.df[column_name].astype(data_type, errors=error_statement[1])
+            elif data_type == "categorical":
+                self.df[column_name] = pd.Categorical(self.df[column_name])
             else:
-                print("Error: the parameter 'ignore_errors' is a bool and can only be True or False.")
-            # Convert column to datatype:
-            try:
-                if data_type in ["datetime", "date"]:
-                    self.df[column_name] = pd.to_datetime(self.df[column_name], errors=error_statement[0])
-                elif data_type in ["str", "int", "float", "bool", "int64", "float64"]:
-                    data_type = data_type.replace("64", "")
-                    self.df[column_name] = self.df[column_name].astype(data_type, errors=error_statement[1])
-                elif data_type == "categorical":
-                    self.df[column_name] = pd.Categorical(self.df[column_name])
-                else:
-                    print(f"Error: data type {data_type} not supported. Check docstrings or call help for more information.")
-            except Exception as e:
-                print(f"Error converting column '{column_name}' to type '{data_type}': {e}")
-            # TODO You could move a lot of what is in the this method to a dictionary mapping of the function and datatypes
-            # it will keep your code cleaner but I really like the idea. 
-            # you could reduce the size of the this method but place the conversion part of the code in another method and calling it here.
-            # There are other ways to do this with dictionaries as well but it should reduce the overall size of your method doing it this way
+                print(f"Error: data type {data_type} not supported. Check docstrings or call help for more information.")
+        except Exception as e:
+            print(f"Error converting column '{column_name}' to type '{data_type}': {e}")
+        # TODO You could move a lot of what is in the this method to a dictionary mapping of the function and datatypes
+        # it will keep your code cleaner but I really like the idea. 
+        # you could reduce the size of the this method but place the conversion part of the code in another method and calling it here.
+        # There are other ways to do this with dictionaries as well but it should reduce the overall size of your method doing it this way
 
-        def convert_month_to_period(self, column_name):
-            try:
-                self.df[column_name] = self.df[column_name].astype(str)
-                self.df['month'] = self.df['month'].str.lower()
-                # NOTE I would actually move your mappings into a separate file here and import it just to keep it cleaner
-                month_map = {'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'june': 6,
-                            'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12}
-                self.df[column_name] = self.df[column_name].map(month_map)
-                self.df[column_name] = pd.to_datetime(self.df[column_name], format='%m', errors='coerce').dt.to_period('M')
-            except Exception as e:
-                print(f"Error converting 'month' column to period: {e}")
-            return self.df.copy()
-        
-        def convert_columns(self, column_list, data_type, ignore_errors=True):
+    def convert_month_to_period(self, column_name: str) -> pd.DataFrame:
+        """
+        Convert a 'month' column to a period.
+
+        Parameters:
+        - column_name (str): Name of the 'month' column.
+
+        Returns:
+        - pd.DataFrame: Transformed DataFrame.
+
+        Example:
+        ```
+        transformed_df = transformer.convert_month_to_period('month_column')
+        ```
+
+        """
+        try:
+            self.df[column_name] = self.df[column_name].astype(str)
+            self.df['month'] = self.df['month'].str.lower()
+            # NOTE I would actually move your mappings into a separate file here and import it just to keep it cleaner
+            month_map = {'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'june': 6,
+                        'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12}
+            self.df[column_name] = self.df[column_name].map(month_map)
+            self.df[column_name] = pd.to_datetime(self.df[column_name], format='%m', errors='coerce').dt.to_period('M')
+        except Exception as e:
+            print(f"Error converting 'month' column to period: {e}")
+        return self.df.copy()
+    
+    def convert_columns(self, column_list: List[str], data_type: str, ignore_errors: bool = True) -> pd.DataFrame:
+        """
+        Convert multiple columns to the specified data type.
+        Loops over the 'convert_to_type" method for a list of columns.
+
+        Parameters:
+        - column_list (List[str]): List of column names to convert.
+        - data_type (str): Target data type ('datetime', 'date', 'str', 'int', 'float', 'bool', 'int64', 'float64', 'categorical').
+        - ignore_errors (bool, optional): Whether to ignore errors during conversion. Default is True.
+
+        Returns:
+        - pd.DataFrame: Transformed DataFrame.
+
+        Example:
+        ```
+        transformed_df = transformer.convert_columns(['col1', 'col2'], 'int', ignore_errors=True)
+        ```
+
+        """
+        for column in column_list:
+            self.convert_to_type(column, data_type, ignore_errors)
+        return self.df.copy()
+    
+    def impute_nulls(self, column_list: List[str], method: str) -> pd.DataFrame:
+        """
+        Impute null values in specified columns using a specified method.
+
+        Parameters:
+        - column_list (List[str]): List of column names to impute null values.
+        - method (str): Imputation method ('mean', 'median', or 'mode').
+
+        Returns:
+        - pd.DataFrame: A copy of the DataFrame with null values imputed.
+
+        Example:
+        ```
+        df = transformer.impute_nulls(['column1', 'column2'], 'mean')
+        ```
+
+        """
+        method = method.lower()
+        valid_methods = ['mean', 'median', 'mode']
+
+        try:
+            if method not in valid_methods:
+                raise ValueError(f"Invalid imputation method. Method can only be one of: {', '.join(valid_methods)}")
+
             for column in column_list:
-                self.convert_to_type(column, data_type, ignore_errors)
-            return self.df.copy()
-        
-        def impute_nulls(self, column_list: List[str], method: str) -> pd.DataFrame:
-            """
-            Impute null values in specified columns using a specified method.
+                if method == 'median':
+                    self.df[column] = self.df[column].fillna(self.df[column].median())
+                elif method == 'mean':
+                    self.df[column] = self.df[column].fillna(self.df[column].mean())
+                elif method == 'mode':
+                    self.df[column] = self.df[column].fillna(self.df[column].mode()[0])
 
-            Parameters:
-            - column_list (List[str]): List of column names to impute null values.
-            - method (str): Imputation method ('mean', 'median', or 'mode').
+        except ValueError as ve:
+            print(f"Error: {ve}. Please check that you have provided a list of column names formatted as strings.")
+        return self.df.copy()
 
-            Returns:
-            - pd.DataFrame: A copy of the DataFrame with null values imputed.
+    def impute_nulls_with_median(self, column_list: List[str]) -> pd.DataFrame:
+        """
+        Impute null values in specified columns using the median.
 
-            Example:
-            ```
-            df = your_instance.impute_nulls(['column1', 'column2'], 'mean')
-            ```
+        Parameters:
+        - column_list (List[str]): List of column names to impute null values.
 
-            """
-            method = method.lower()
-            valid_methods = ['mean', 'median', 'mode']
+        Returns:
+        - pd.DataFrame: A copy of the DataFrame with null values imputed.
 
-            try:
-                if method not in valid_methods:
-                    raise ValueError(f"Invalid imputation method. Method can only be one of: {', '.join(valid_methods)}")
+        Example:
+        ```
+        df = transformer.impute_nulls_with_median(['column1', 'column2'])
+        ```
 
-                for column in column_list:
-                    if method == 'median':
-                        self.df[column] = self.df[column].fillna(self.df[column].median())
-                    elif method == 'mean':
-                        self.df[column] = self.df[column].fillna(self.df[column].mean())
-                    elif method == 'mode':
-                        self.df[column] = self.df[column].fillna(self.df[column].mode()[0])
+        """
+        for column in column_list:
+            self.df[column] = self.df[column].fillna(self.df[column].median())
+        return self.df
+    
+    def impute_nulls_with_mean(self, column_list: List[str]) -> pd.DataFrame:
+        """
+        Impute null values in specified columns using the mean.
 
-            except ValueError as ve:
-                print(f"Error: {ve}. Please check that you have provided a list of column names formatted as strings.")
-            return self.df.copy()
+        Parameters:
+        - column_list (List[str]): List of column names to impute null values.
 
-        def impute_nulls_with_median(self, column_list):
-            for column in column_list:
-                self.df[column] = self.df[column].fillna(self.df[column].median())
-            return self.df
-        
-        def impute_nulls_with_mean(self, column_list):
-            for column in column_list:
-                self.df[column] = self.df[column].fillna(self.df[column].mean())
-            return self.df
-        
-        def impute_nulls_with_mode(self, column_list):
-            for column in column_list:
-                self.df[column] = self.df[column].fillna(self.df[column].mode()[0])
-            return self.df
+        Returns:
+        - pd.DataFrame: A copy of the DataFrame with null values imputed.
 
-        def log_transform(self, column_list):
-            for col in column_list:
-                self.df[col] = self.df[col].map(lambda i: np.log(i) if i > 0 else 0)
-            return self.df
-      
-        def boxcox_transform(self, column_list):
-            for col in column_list:
-                boxcox_population, lambda_values = stats.boxcox(self.df[col])
-                self.df[col] = boxcox_population
-            return self.df
-       
-        def yeo_johnson_transform(self, column_list):
-            for col in column_list:
-                nonzero_values = self.df[col][self.df[col] != 0]
-                yeojohnson_values, lambda_value = stats.yeojohnson(nonzero_values)
-                self.df[col] = self.df[col].apply(lambda x: stats.yeojohnson([x], lmbda=lambda_value)[0] if x != 0 else 0)
-            return self.df
+        Example:
+        ```
+        df = transformer.impute_nulls_with_mean(['column1', 'column2'])
+        ```
+
+        """
+        for column in column_list:
+            self.df[column] = self.df[column].fillna(self.df[column].mean())
+        return self.df
+    
+    def impute_nulls_with_mode(self, column_list: List[str]) -> pd.DataFrame:
+        """
+        Impute null values in specified columns using the mode.
+
+        Parameters:
+        - column_list (List[str]): List of column names to impute null values.
+
+        Returns:
+        - pd.DataFrame: A copy of the DataFrame with null values imputed.
+
+        Example:
+        ```
+        df = transformer.impute_nulls_with_mode(['column1', 'column2'])
+        ```
+
+        """
+        for column in column_list:
+            self.df[column] = self.df[column].fillna(self.df[column].mode()[0])
+        return self.df
+
+    def log_transform(self, column_list: List[str]) -> pd.DataFrame:
+        """
+        Apply a log transformation to specified columns.
+
+        Parameters:
+        - column_list (List[str]): List of column names to transform.
+
+        Returns:
+        - pd.DataFrame: Transformed DataFrame.
+
+        Example:
+        ```
+        transformed_df = transformer.log_transform(['column1', 'column2'])
+        ```
+
+        """
+        for col in column_list:
+            self.df[col] = self.df[col].map(lambda i: np.log(i) if i > 0 else 0)
+        return self.df
+    
+    def boxcox_transform(self, column_list: List[str]) -> pd.DataFrame:
+        """
+        Apply a Box-Cox transformation to specified columns.
+
+        Parameters:
+        - column_list (List[str]): List of column names to transform.
+
+        Returns:
+        - pd.DataFrame: Transformed DataFrame.
+
+        Example:
+        ```
+        transformed_df = transformer.boxcox_transform(['column1', 'column2'])
+        ```
+
+        """
+        for col in column_list:
+            boxcox_population, lambda_values = stats.boxcox(self.df[col])
+            self.df[col] = boxcox_population
+        return self.df
+    
+    def yeo_johnson_transform(self, column_list: List[str]) -> pd.DataFrame:
+        """
+        Apply a Yeo-Johnson transformation to specified columns.
+
+        Parameters:
+        - column_list (List[str]): List of column names to transform.
+
+        Returns:
+        - pd.DataFrame: Transformed DataFrame.
+
+        Example:
+        ```
+        transformed_df = transformer.yeo_johnson_transform(['column1', 'column2'])
+        ```
+
+        """
+        for col in column_list:
+            nonzero_values = self.df[col][self.df[col] != 0]
+            yeojohnson_values, lambda_value = stats.yeojohnson(nonzero_values)
+            self.df[col] = self.df[col].apply(lambda x: stats.yeojohnson([x], lmbda=lambda_value)[0] if x != 0 else 0)
+        return self.df
 
             
 class StatisticalTests(DataFrameInfo):
@@ -433,31 +587,42 @@ class StatisticalTests(DataFrameInfo):
     def __init__(self, dataframe):
         self.df = dataframe.copy()
 
-    # TODO I wouldn't call it column_1 and column_list here. Either use independent and dependant variables or use X, y
-    # NOTE Really lke the method though 
-    def chi_square_test(self, column_1, column_list): # Only between categorical variables
+    # NOTE Really like the method though 
+    def chi_square_test(self, independent_variable, dependant_variables):
+        """
+        Perform chi-square test between two categorical variables.
+
+        Parameters:
+        - independent_variable (str): Name of the independent variable.
+        - dependent_variables (List[str]): List of dependent variables to test against the independent variable.
+
+        Returns:
+        - float: p-value of the chi-square test.
+
+        """
+        # Only between categorical variables
         chi_sq_test_df = self.df.copy()
-        chi_sq_test_df[column_1] = chi_sq_test_df[column_1].isnull()
+        chi_sq_test_df[independent_variable] = chi_sq_test_df[independent_variable].isnull()
         # Step 2: Crosstab the new column with B
-        if len(column_list) > 3:
-            for column in column_list:
-                contingency_table = pd.crosstab(chi_sq_test_df[column_1], chi_sq_test_df[column])
+        if len(dependant_variables) > 3:
+            for column in dependant_variables:
+                contingency_table = pd.crosstab(chi_sq_test_df[independent_variable], chi_sq_test_df[column])
                 # Step 3: Perform chi-squared test
                 chi2, p, dof, expected = chi2_contingency(contingency_table)
                 if p < 0.05:
-                    print(f"Chi-square test for missing values in {column_1} against {column} column: ")
+                    print(f"Chi-square test for missing values in {independent_variable} against {column} column: ")
                     print(f"p-value = {p}: Significant")
                     return p
                 elif p == 0.05:
-                    print(f"Chi-square test for missing values in {column_1} against {column} column: ")
+                    print(f"Chi-square test for missing values in {independent_variable} against {column} column: ")
                     print(f"p-value = {p}: Likely not significant")
                     return p
-        elif len(column_list) <= 3:
-            for column in column_list:
-                contingency_table = pd.crosstab(chi_sq_test_df[column_1], chi_sq_test_df[column])
+        elif len(dependant_variables) <= 3:
+            for column in dependant_variables:
+                contingency_table = pd.crosstab(chi_sq_test_df[independent_variable], chi_sq_test_df[column])
                 # Step 3: Perform chi-squared test
                 chi2, p, dof, expected = chi2_contingency(contingency_table)
-                print(f"Chi-square test for missing values in {column_1} against {column} column: ")
+                print(f"Chi-square test for missing values in {independent_variable} against {column} column: ")
                 print(f"p-value = {p}")
                 return p
             
@@ -465,8 +630,12 @@ class StatisticalTests(DataFrameInfo):
         stat, p = normaltest(self.df[column_name], nan_policy='omit')
         print('Statistics=%.3f, p=%.3f' % (stat, p))
 
-    # TODO I would move these method below into their own class as they're 
-    # related to removng outliers removing outliers. 
+
+class OutlierRemoval:
+    """
+    A class for performing outlier removal operations on a DataFrame.
+    """
+
     def z_scores(self, column):
         mean_col = np.mean(self.df[column])
         std_col = np.std(self.df[column])
@@ -505,7 +674,7 @@ class StatisticalTests(DataFrameInfo):
 class Plotter(StatisticalTests):
 
 
-    def __init__(self,dataframe):
+    def __init__(self, dataframe):
         self.df = dataframe.copy()
         
     def discrete_probability_distribution(self, column_name, **kwargs):
@@ -536,7 +705,6 @@ class Plotter(StatisticalTests):
         corr = self.df.select_dtypes(include=np.number).corr()
         mask = np.zeros_like(corr, dtype=np.bool)
         mask[np.triu_indices_from(mask)] = True
-        # set thins up for plotting
         cmap = sns.diverging_palette(220, 10, as_cmap=True)
         # Draw the heatmap
         sns.heatmap(corr, mask=mask, 
@@ -577,30 +745,29 @@ class Plotter(StatisticalTests):
         x=plt.xticks(rotation=90)
 
     def count_plots_grid(self, categorical_features):
-        # NOTE Try and avoid variables such as g, f, t make it more descriptive
-        f = pd.melt(self.df, value_vars=categorical_features)
-        g = sns.FacetGrid(f, col='variable',  col_wrap=3, sharex=False, sharey=False)
-        g = g.map(self.count_plot, 'value')
+        figure = pd.melt(self.df, value_vars=categorical_features)
+        grid = sns.FacetGrid(figure, col='variable',  col_wrap=3, sharex=False, sharey=False)
+        grid = grid.map(self.count_plot, 'value')
 
     def plot_log_transform(self, col):
         nonzero_values = self.df[col][self.df[col] != 0]
         log_col = nonzero_values.map(lambda i: np.log(i) if i > 0 else 0)
-        t=sns.histplot(log_col,label="Skewness: %.2f"%(log_col.skew()), kde=True )
-        t.legend()
+        figure = sns.histplot(log_col,label="Skewness: %.2f"%(log_col.skew()), kde=True)
+        figure.legend()
     
     def plot_boxcox_transform(self, col):
         boxcox_population = self.df[col]
         boxcox_population= stats.boxcox(boxcox_population)
         boxcox_population= pd.Series(boxcox_population[0])
-        t=sns.histplot(boxcox_population,label="Skewness: %.2f"%(boxcox_population.skew()) )
-        t.legend()
+        figure = sns.histplot(boxcox_population,label="Skewness: %.2f"%(boxcox_population.skew()))
+        figure.legend()
     
     def plot_yeo_johnson_transform(self, col):
         nonzero_values = self.df[col][self.df[col] != 0]
         yeojohnson_population = stats.yeojohnson(nonzero_values)
         yeojohnson_population= pd.Series(yeojohnson_population[0])
-        t=sns.histplot(yeojohnson_population,label="Skewness: %.2f"%(yeojohnson_population.skew()) )
-        t.legend()
+        figure = sns.histplot(yeojohnson_population,label="Skewness: %.2f"%(yeojohnson_population.skew()))
+        figure.legend()
             
 
     
