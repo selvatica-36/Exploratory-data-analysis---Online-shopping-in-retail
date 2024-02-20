@@ -1,6 +1,5 @@
 from scipy import stats
 from statsmodels.graphics.gofplots import qqplot
-import statsmodels.api as sm
 from scripts.statistical_tests import StatisticalTests
 from typing import List
 import missingno as msno
@@ -71,7 +70,7 @@ class Plotter(StatisticalTests):
 
         """
         corr = self.df.select_dtypes(include=np.number).corr()
-        mask = np.zeros_like(corr, dtype=np.bool)
+        mask = np.zeros_like(corr, dtype=bool)
         mask[np.triu_indices_from(mask)] = True
         cmap = sns.diverging_palette(220, 10, as_cmap=True)
         # Draw the heatmap
@@ -103,12 +102,13 @@ class Plotter(StatisticalTests):
         remainder = 1 if len(columns) % 4 != 0 else 0
         rows = int(len(columns) / 4 + remainder)
         fig, axes = plt.subplots(
-            ncols=4, nrows=rows, sharex=False, figsize=(12, 6))
+            ncols=3, nrows=rows, sharex=False, figsize=(12, 6))
         # np.ravel flattens the 2d axis array, meaning that we iterate and plot on x:y axis
         for col, ax in zip(columns, np.ravel(axes)):
-            sm.qqplot(self.df[col], line='s', ax=ax, fit=True)
+            qqplot(self.df[col], line='s', ax=ax, fit=True)
             ax.set_title(f'{col} QQ Plot')
         plt.tight_layout()
+
 
     def nulls_dataframe_plot(self) -> None:
         """
