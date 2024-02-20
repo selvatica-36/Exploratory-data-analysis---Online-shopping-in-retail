@@ -118,7 +118,7 @@ class DataFrameInfo:
     
     def info_columns(self, columns=None) -> None:
         """
-        Display concise information about columns in a subset of the DataFrame.
+        Display concise information about columns in a subset of the DataFrame: null counts and data types of columns.
 
         Parameters:
         - columns: Columns to include in the subset.
