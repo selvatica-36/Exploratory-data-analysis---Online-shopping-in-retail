@@ -37,7 +37,7 @@ class OutlierDetector(StatisticalTests):
         mean_col = np.mean(self.df[column])
         std_col = np.std(self.df[column])
         z_scores = (self.df[column] - mean_col) / std_col
-        col_values = self.df[column].copy()
+        col_values = self.df[[column]].copy()
         col_values['z-scores'] = z_scores
         return col_values
     
@@ -53,4 +53,4 @@ class OutlierDetector(StatisticalTests):
             Q1, Q3, IQR, results_str = self.IQR(col)
             outliers = self.df[(self.df[col] < (Q1 - 1.5 * IQR)) | (self.df[col] > (Q3 + 1.5 * IQR))]
             print("Outliers:")
-            print(outliers.shape)
+            print(f'shape: {outliers.shape}')
