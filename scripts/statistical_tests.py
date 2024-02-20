@@ -1,7 +1,8 @@
 from scripts.info_extractor import DataFrameInfo
-from scipy.stats import chi2_contingency, normaltest
+from scipy.stats import chi2, chi2_contingency, normaltest
 from typing import List, Tuple
 import math
+import numpy as np
 import pandas as pd
 
 
@@ -118,3 +119,5 @@ class StatisticalTests(DataFrameInfo):
             results.append(result_tuple)
             print(result_tuple[-1])  # Print the string information
         return results
+    
+    
