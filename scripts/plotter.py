@@ -109,7 +109,6 @@ class Plotter(StatisticalTests):
             ax.set_title(f'{col} QQ Plot')
         plt.tight_layout()
 
-
     def nulls_dataframe_plot(self) -> None:
         """
         Creates a matrix plot showing the nullity of the DataFrame.
