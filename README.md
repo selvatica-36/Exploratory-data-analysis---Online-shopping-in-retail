@@ -1,6 +1,11 @@
-# EDA: Online Shopping in Retail
+# Exploratory Data Analysis (EDA): Online Shopping in Retail
+
+![GitHub commit activity](https://img.shields.io/github/commit-activity/y/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail)  ![GitHub last commit](https://img.shields.io/github/last-commit/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail) 
+![Static Badge](https://img.shields.io/badge/Python_version-3.12.1)
+
+
 ## Summary
-In this project, I have performed exploratory data analysis on a sample retail industry dataset, detailing website information for every visitor.
+
 
 ## Table of Contents
 1. [Introduction](#1-introduction)
@@ -10,13 +15,20 @@ In this project, I have performed exploratory data analysis on a sample retail i
 5. [License information](#5-license-information)
 
 
-## 1. Introduction
+## 1. Project Description
 **As a learner**, my aim in this project was to consolidate my EDA knowledge, with a specific focus on OOP-oriented programming, data cleaning and visualisation. My main two learning points have been:
 - Imputation of null values.
 - Correcting skewness in dataset columns.
 - Working with pandas to filter and group data. 
 
 For the full information on all dataset variables and their meaning, please refer to the top of the analysis_report.ipynb file.
+
+## 2. Technologies used
+
+
+
+
+
 
 ## 2. Installation instructions
 All files are stored remotely in Github: https://github.com/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail
@@ -33,11 +45,35 @@ The repository contains:
     - 'data_preprocessed.csv': preprocessed dataset including all transformations performed in 'EDA_customer_activity.ipynb'
     - 'data_preprocessed_skewed': preprocessed dataset, including only handling of nulls. No columns have been transformed or deleted.
 
-NOTE: the user should have conda or pip installed with a python package (python version 3.11.5).
 
 ## 3. Usage instructions
 To access the final report insights, please check analysis_report.ipynb directly.
 
+## 4. File Structure
 
+```
+─ data
+│   ├── cleaned_skewed_data.csv  #Cleaned data for analysis
+│   ├── ML_preprocessed_data.csv #Cleaned and transformed data for ML 
+│   └── customer_activity.csv #Data downloaded fron RDS database 
+├── readme-images
+│   └── EDA_flow_chart.png
+├── scripts
+│   ├── db_utils.py
+│   ├── info_extractor.py
+│   ├── outlier_detector.py
+│   ├── plotter.py
+│   ├── statistical_tests.py
+│   └── transformer.py 
+├── EDA_customer_activity.ipynb
+├── business_analysis_report.ipynb
+├── requirements.txt
+├── environment.yml
+├── .gitignore
+├── README.md
+
+```
 ## 5. License information
-This is an open source public repository. The dataset was obtained from Aicore. 
+This is an open source public repository. The dataset was obtained from Aicore. AiCore provided the necessary credentials to download the dataset from AWS RDS.
+
+![alt text](/readme-images/EDA_flow_chart.png)
