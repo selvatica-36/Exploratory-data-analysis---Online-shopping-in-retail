@@ -1,7 +1,6 @@
 # Exploratory Data Analysis (EDA): Online Shopping in Retail
 
-![GitHub commit activity](https://img.shields.io/github/commit-activity/y/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail)  ![GitHub last commit](https://img.shields.io/github/last-commit/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail) 
-![Static Badge](https://img.shields.io/badge/Python_version-3.12.1)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/y/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail)  ![GitHub last commit](https://img.shields.io/github/last-commit/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail) [![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail)
 
 
 ## Summary
