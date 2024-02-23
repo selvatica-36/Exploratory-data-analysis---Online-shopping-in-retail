@@ -18,14 +18,20 @@
 1. [Installation instructions](#1-installation-instructions)
 2. [How to use this repository](#2-how-to-use-this-repository)
 3. [Technologies, modules and libraries](#3-technologies-modules-and-libraries)
+
     3.1. [technologies](#31-technologies)
+
     3.2. [Python modules and libraries](#32-python-modules-and-libraries)
 4. [Understanding the dataset](#4-understanding-the-dataset)
 5. [Project Workflow: Extract-Load-Transform (ELT) Pipeline Architecture and EDA Methods](#4-project-workflow-extract-load-transform-elt-pipeline-architecture-and-eda-methods)
 6. [Business insights and recommendations: Summary](#6-business-insights-and-recommendations-summary)
+
     6.1. [*What are our customers doing?*](#61-what-are-our-customers-doing)
+
     6.2. [*What software are our customers using the most to access the website?*](#62-what-software-are-our-customers-using-the-most-to-access-the-website)
+
     6.3. [*Do we need to optimise the marketing strategy?*](#63-do-we-need-to-optimise-the-marketing-strategy)
+    
     6.4. [Detailed sales brakdown](#64-detailed-sales-breakdown)
 7. [File structure](#7-file-structure)
 8. [License information](#8-license-information)
