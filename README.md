@@ -19,7 +19,7 @@
 2. [How to use this repository](#2-how-to-use-this-repository)
 3. [Technologies, modules and libraries](#3-technologies-modules-and-libraries)
 
-    3.1. [technologies](#31-technologies)
+    3.1. [Technologies](#31-technologies)
 
     3.2. [Python modules and libraries](#32-python-modules-and-libraries)
 4. [Understanding the dataset](#4-understanding-the-dataset)
@@ -32,7 +32,7 @@
 
     6.3. [*Do we need to optimise the marketing strategy?*](#63-do-we-need-to-optimise-the-marketing-strategy)
     
-    6.4. [Detailed sales brakdown](#64-detailed-sales-breakdown)
+    6.4. [Detailed sales breakdown](#64-detailed-sales-breakdown)
 7. [File structure](#7-file-structure)
 8. [License information](#8-license-information)
 
