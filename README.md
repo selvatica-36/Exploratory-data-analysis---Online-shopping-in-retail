@@ -16,9 +16,19 @@
 
 ## Table of Contents
 1. [Installation instructions](#1-installation-instructions)
-3. [Usage instructions](#3-usage-instructions)
-4. [File structure](#4-file-structure)
-5. [License information](#5-license-information)
+2. [How to use this repository](#2-how-to-use-this-repository)
+3. [Technologies, modules and libraries](#3-technologies-modules-and-libraries)
+    3.1. [technologies](#31-technologies)
+    3.2. [Python modules and libraries](#32-python-modules-and-libraries)
+4. [Understanding the dataset](#4-understanding-the-dataset)
+5. [Project Workflow: Extract-Load-Transform (ELT) Pipeline Architecture and EDA Methods](#4-project-workflow-extract-load-transform-elt-pipeline-architecture-and-eda-methods)
+6. [Business insights and recommendations: Summary](#6-business-insights-and-recommendations-summary)
+    6.1. [*What are our customers doing?*](#61-what-are-our-customers-doing)
+    6.2. [*What software are our customers using the most to access the website?*](#62-what-software-are-our-customers-using-the-most-to-access-the-website)
+    6.3. [*Do we need to optimise the marketing strategy?*](#63-do-we-need-to-optimise-the-marketing-strategy)
+    6.4. [Detailed sales brakdown](#64-detailed-sales-breakdown)
+7. [File structure](#7-file-structure)
+8. [License information](#8-license-information)
 
 ## 1. Installation instructions
 All needed files are stored in this Github repo: https://github.com/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail
@@ -87,7 +97,7 @@ DATA FILES
 
 `os`: module that provides a portable way of using operating system dependent functionality e.g. save a downloaded file on a local folder.
 
-## 3. Understanding the dataset
+## 4. Understanding the dataset
 ### *Online customer activity in a multinational retail company*
 
 | Column name               | Column description                                                                                                                                     |
@@ -111,7 +121,7 @@ DATA FILES
 |  revenue                  |  Whether the customer purchased anything that session                                                                                                  |
 
 
-## 4. Project Workflow: Extract-Load-Transform (ELT) Pipeline Architecture and EDA Methods
+## 5. Project Workflow: Extract-Load-Transform (ELT) Pipeline Architecture and EDA Methods
 
 The figure below shows the general workflow used to **extract, load and transform (ELT)** the data. As part of this process, I performed **exploratory data analysis (EDA)** to decide when and how to clean and transform the data. For all these purposes, I created custom methods encapsuled in various classes, as detailed below. 
 
@@ -125,11 +135,11 @@ The figure below shows the general workflow used to **extract, load and transfor
 ![alt text](/readme-images/EDA_flow_chart.png)
 
 
-## 5. Business insights and recommendations: Summary
+## 6. Business insights and recommendations: Summary
 
 For the full analysis, check the notebook `business_analysis_report.ipynb`.
 
-### 5.1. What are our customers doing?
+### 6.1. What are our customers doing?
 #### **Insights**
 GENERAL SALES
 - 77% of total sales happen during the week, whereas 23 % of total sales happen on the weekend.
@@ -156,7 +166,7 @@ WEBSITE ACTIVITY
 
 2️⃣ Increase advertising budget on TikTok and Instagram as they are more frequently used than facebook.
 
-### 5.2. What software are our customers using the most to access the website?
+### 6.2. What software are our customers using the most to access the website?
 #### **Insights**
 OERATING SYSTEMS AND DEVICES
 - The three most used operating systems are: Windows (53.5%), MacOS (21.7%) and Android (21%). The least used systems are Ubuntu (0.07%) and ChromeOS (0.05%). **Out of the mainstream systems, iOS only takes 3%.**
@@ -177,7 +187,7 @@ BROWSER SUPPORT
 
 1️⃣ **Improve mobile accessibility to the website.** Data shows most users access through desktop, which can indicate that the website does not work as well on mobile.
 
-### 5.3. Do we need to optimise the marketing strategy?
+### 6.3. Do we need to optimise the marketing strategy?
 #### **Insights**
 - Google search traffic contributes the most to revenue across all regions (40-50%). Facebook ads is the second highest contributor in all regions except for South America, where Bing search takes second place. Trends are fairly similar across all regions.
 
@@ -198,7 +208,7 @@ BROWSER SUPPORT
 
 3️⃣ Keep investing on instagram pages. They are effective (low bounce rates) even if they only bring < 5 % of revenue.
 
-### 5.4. Detailed sales breakdown
+### 6.4. Detailed sales breakdown
 #### **Insights**
 NEW VS. RETURNING VISITORS
  - Most purchases are made by returning visitors (79.5%). 
@@ -219,7 +229,7 @@ TRAFFIC TYPE CONTRIBUTION TO SALES
 
 3️⃣ Increase budget in ads and social traffic. This should be done at the same time as increasing mobile accesibility to the website. 
 
-## 6. File Structure
+## 7. File Structure
 ```
 ├──data
 │   ├── cleaned_skewed_data.csv  #Cleaned data for analysis
@@ -243,5 +253,5 @@ TRAFFIC TYPE CONTRIBUTION TO SALES
 
 ```
 
-## 7. License information
+## 8. License information
 This is an open source public repository. The dataset was obtained from Aicore. AiCore provided the necessary credentials to download the dataset from AWS RDS (these are not publicly available).
