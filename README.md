@@ -14,7 +14,7 @@
 📊 **The second part of the project focuses on data analysis to uncover business insights.** We will answer relevant business questions regarding sales trends, marketing strategy, website performance and customer behaviour. To do so, we will generate informative data visualisations and **offer insights and recommendations**.
 
 ## Project set up and instructions
-In the wiki you will find a detailed guides to the project, including installation instructions, how to use the repository and details on the dataset. 
+For detailed guides to the project, please refer to the [Github Wiki](https://github.com/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail/wiki).These guides include installation instructions, how to use the repository and details on the dataset. 
 
 ## Currently working on
 - Developing a data story and case analysis study to include in this README file. This will involve a rewrite of the section below: **Business insights and recommendations**. *Please, come back again soon!*
@@ -25,7 +25,8 @@ In the wiki you will find a detailed guides to the project, including installati
 - Investigate better ways of imputing data (if applicable): regression, MICE, KNN, etc.
 
 ## Business insights and recommendations
-For the full analysis, check the notebook [`business_analysis_report.ipynb`](https://github.com/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail/blob/main/business_analysis_report.ipynb).
+For the full exploratory data analysis (EDA), please check the notebook [`EDA_customer_activity.ipynb`](https://github.com/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail/blob/main/EDA_customer_activity.ipynb).
+For the full business analysis, please check the notebook [`business_analysis_report.ipynb`](https://github.com/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail/blob/main/business_analysis_report.ipynb).
 
 ### 6.1. What are our customers doing?
 #### **Insights**
