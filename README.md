@@ -13,135 +13,18 @@
 
 📊 **The second part of the project focuses on data analysis to uncover business insights.** We will answer relevant business questions regarding sales trends, marketing strategy, website performance and customer behaviour. To do so, we will generate informative data visualisations and **offer insights and recommendations**.
 
+## Project set up and instructions
+In the wiki you will find a detailed guides to the project, including installation instructions, how to use the repository and details on the dataset. 
 
-## Table of Contents
-1. [Installation instructions](#1-installation-instructions)
-2. [How to use this repository](#2-how-to-use-this-repository)
-3. [Technologies, modules and libraries](#3-technologies-modules-and-libraries)
+## Currently working on
+- Developing a data story and case analysis study to include in this README file. This will involve a rewrite of the section below: **Business insights and recommendations**. *Please, come back again soon!*
 
-    3.1. [technologies](#31-technologies)
+## Improvements and next steps
+- Perform hypothesis testing: run 2-sample t-tests in certain parts of the analysis to determine wether the differences between groups are significant or not. 
+- Further deep dive into data missingness mechanisms to determine if imputation was done in the best way.
+- Investigate better ways of imputing data (if applicable): regression, MICE, KNN, etc.
 
-    3.2. [Python modules and libraries](#32-python-modules-and-libraries)
-4. [Understanding the dataset](#4-understanding-the-dataset)
-5. [Project Workflow: Extract-Load-Transform (ELT) Pipeline Architecture and EDA Methods](#4-project-workflow-extract-load-transform-elt-pipeline-architecture-and-eda-methods)
-6. [Business insights and recommendations: Summary](#6-business-insights-and-recommendations-summary)
-
-    6.1. [*What are our customers doing?*](#61-what-are-our-customers-doing)
-
-    6.2. [*What software are our customers using the most to access the website?*](#62-what-software-are-our-customers-using-the-most-to-access-the-website)
-
-    6.3. [*Do we need to optimise the marketing strategy?*](#63-do-we-need-to-optimise-the-marketing-strategy)
-    
-    6.4. [Detailed sales brakdown](#64-detailed-sales-breakdown)
-7. [File structure](#7-file-structure)
-8. [License information](#8-license-information)
-
-## 1. Installation instructions
-All needed files are stored in this Github repo: https://github.com/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail
-
-This project has been developed within a custom conda environment. Upon creating the environment, I installed `pip` and then used `pip install` command to download from the PyPI library all modules and dependencies needed for the project. 
-
-1. All environment requirements have been uploaded to the repo in two different formats: `environment.yml` and `requirements.txt`. Depending on your OS and/or your preference of virtual environment, you will need one or the other. 
-
-    1a. To install environment into a python virtual environment, run: `pip install -r requirements.txt`
-
-    1b. To install environment into a conda virtual environment, run: `conda env create --name environment_name -f environment.yml`
-
-2. Clone repo locally and/or fork it to a separate github account.
-3. Run scripts/notebooks as needed.
-
-## 2. How to use this repository
-
-PYTHON SCRIPTS
-- `db_utils.py`: Contains utility class and methods to connect to AWS RDS and download the dataset locally. 
-- `info_extractor.py`: Contains class with methods to extract dataframe information and slice the dataframe as needed.
-- `transformer.py`: Contains class with methods to perform data cleaning and transformations on the dataframe.
-- `plotter.py`: Contains class with methods to perform some data visualisations such as discrete and continuous distributions, correlation matrices and quantile-quantile plots.
-- `statistical_tests.py`: Contains class with methods to perform sstatistical tests on the data, such as chi2 or Agostino's K2 normality test.
-- `outlier_detector.py`: Contains class with methods to perform statistical tests and detect outliers in the data.
-
-JUPYTER NOTEBOOKS
-- `EDA_customer_activity.ipynb`: Notebook containing the full EDA process and the data cleaning and transformations: handling of nulls, skewness and collinearity analysis.
-- `business_analysis_report.ipynb`: Notebook containing the final business analysis and visualisations, in response to various queries  of interest.
-
-DATA FILES
-- `customer_activity.csv`: Raw dataset downloaded from RDS
-- `ML_preprocessed_data.csv`: preprocessed dataset ready for ML algorithms. Processing has dealt with data types, missing data (imputing nulls/dropping rows) and overly correlated columns (by dropping column). Data has also been transformed to fit a normal distribution.
-- `cleaned_skewed_data.csv`: preprocessed dataset for data analysis and visualisation. Processing has dealt with data types and missing data (imputing nulls/dropping rows) only.
-
-
-## 3. Technologies, modules and libraries 
-
-### 3.1. Technologies
-
-- **AWS**: Used for cloud-based services and storage.
-- **Jupyter Notebooks**: Used for data exploration and analysis.
-
-### 3.2. Python modules and libraries
-
-`pandas`: fast, powerful, flexible and easy to use open source data analysis and manipulation tool.
-
-`sqlalchemy`: toolkit for SQL interaction and an Object-Relational Mapping (ORM) library for database operations.
-
-`numpy`: library that provides powerful and versatile array computations, mathematical functions and other tools for data analysis and visualisation.
-
-`matplotlib`: library for creating static, animated, and interactive visualizations in Python.
-
-`seaborn`: library for making statistical graphics in Python. It builds on top of matplotlib and integrates closely with pandas data structures.
-
-`scipy.stats`: SciPy is a collection of mathematical algorithms and convenience functions built on NumPy. `stats` is a subpackage that provides statistical distributions and functions.
-
-`statsmodels`: library that provides classes and functions for the estimation of many different statistical models, as well as for conducting statistical tests, and statistical data exploration.
-
-`missingno`: library that provides a series of visualisations to understance the presence and distributions of missing data within a pandas dataframe.
-
-`math`: module that provides access to the mathematical functions.
-
-`tabulate`: library and a command-line utility to pretty-print tabular data in Python.
-
-`yaml`: library for working with YAML files.
-
-`os`: module that provides a portable way of using operating system dependent functionality e.g. save a downloaded file on a local folder.
-
-## 4. Understanding the dataset
-### *Online customer activity in a multinational retail company*
-
-| Column name               | Column description                                                                                                                                     |
-|---------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
-|  administrative           |  Columns which indicates which administrative activity the user was performing on their account. Encoded as a number.                                                       |
-|  administrative_duration  |  How long a user performed administrative tasks in that session.                                                                                       |
-|  informational            |  Indicates which informational activity the user was performing on the website. Encoded as a number.                                                                        |
-|  informational_duration   |  How long a users performed informational tasks in seconds during that session.                                                                        |
-|  product_related          |  Indicates which product the user was viewing on the website. Encoded as a number.                                                                                          |
-|  product_related_duration |  How long a user browsed products during that session.                                                                                                 |
-|  bounce_rates             |  Historical bounce rate of that particular page for all users. They visited the directly and immediately exited. Heavily correlated with 'exit_rates'. |
-|  exit_rates               |  Historical exit rate of the users from that particular page.                                                                                          |
-|  page_values              |  The average value contribution of a page to a customer sale                                                                                           |
-|  month                    |  Month the users activity took place                                                                                                                   |
-|  operating_systems        |  Operating system the user was using                                                                                                                   |
-|  browser                  |  The browser used by the user                                                                                                                          |
-|  region                   |  The region the user originated from                                                                                                                   |
-|  traffic_type             |  How the user was redirected to the site                                                                                                               |
-|  visitor_type             |  Whether a customer was is new/returning or other                                                                                                      |
-|  weekend                  |  Whether the activity only took place during the weekend                                                                                               |
-|  revenue                  |  Whether the customer purchased anything that session                                                                                                  |
-
-
-## 5. Project Workflow: Extract-Load-Transform (ELT) Pipeline Architecture and EDA Methods
-
-The figure below shows the general workflow used to **extract, load and transform (ELT)** the data. As part of this process, I performed **exploratory data analysis (EDA)** to decide when and how to clean and transform the data. For all these purposes, I created custom methods encapsuled in various classes, as detailed below. 
-
-1. Data extraction was performed by running the db_utils.py script directly.
-2. Data loading was performed directly on the jupyter notebook `EDA_customer_activity.ipynb`.
-3. EDA was performed on the jupyter notebook `EDA_customer_activity.ipynb`.
-4. Data transformations were performed directly on the jupyter notebook `EDA_customer_activity.ipynb`, but could also be coded on the `__main__ == '__name__'` part of the `transformed.py` script.
-
-*Note:* the figure below does NOT contain all methods used for EDA, but rather some relevant examples.
-
-![alt text](/readme-images/EDA_flow_chart.png)
-
-
-## 6. Business insights and recommendations: Summary
+## Business insights and recommendations
 
 For the full analysis, check the notebook `business_analysis_report.ipynb`.
 
@@ -235,7 +118,7 @@ TRAFFIC TYPE CONTRIBUTION TO SALES
 
 3️⃣ Increase budget in ads and social traffic. This should be done at the same time as increasing mobile accesibility to the website. 
 
-## 7. File Structure
+## File Structure
 ```
 ├──data
 │   ├── cleaned_skewed_data.csv  #Cleaned data for analysis
@@ -259,5 +142,5 @@ TRAFFIC TYPE CONTRIBUTION TO SALES
 
 ```
 
-## 8. License information
+## License information
 This is an open source public repository. The dataset was obtained from Aicore. AiCore provided the necessary credentials to download the dataset from AWS RDS (these are not publicly available).
