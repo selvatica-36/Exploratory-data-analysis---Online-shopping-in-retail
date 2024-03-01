@@ -25,7 +25,6 @@ In the wiki you will find a detailed guides to the project, including installati
 - Investigate better ways of imputing data (if applicable): regression, MICE, KNN, etc.
 
 ## Business insights and recommendations
-
 For the full analysis, check the notebook `business_analysis_report.ipynb`.
 
 ### 6.1. What are our customers doing?
