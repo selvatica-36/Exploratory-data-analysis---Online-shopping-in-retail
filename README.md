@@ -26,6 +26,7 @@ For detailed guides to the project, please refer to the [Github Wiki](https://gi
 
 ## Business insights and recommendations
 For the full exploratory data analysis (EDA), please check the notebook [`EDA_customer_activity.ipynb`](https://github.com/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail/blob/main/EDA_customer_activity.ipynb).
+
 For the full business analysis, please check the notebook [`business_analysis_report.ipynb`](https://github.com/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail/blob/main/business_analysis_report.ipynb).
 
 ### 6.1. What are our customers doing?
