@@ -19,8 +19,7 @@ For detailed guides to the project, please refer to the [Github Wiki](https://gi
 ## Currently working on
 - Developing a data story and case analysis study to include in this README file. This will involve a rewrite of the section below: **Business insights and recommendations**. *Please, come back again soon!*
 
-## Improvements and next steps
-- Perform hypothesis testing: run 2-sample t-tests in certain parts of the analysis to determine wether the differences between groups are significant or not. 
+## Improvements and next steps 
 - Further deep dive into data missingness mechanisms to determine if imputation was done in the best way.
 - Investigate better ways of imputing data (if applicable): regression, MICE, KNN, etc.
 
