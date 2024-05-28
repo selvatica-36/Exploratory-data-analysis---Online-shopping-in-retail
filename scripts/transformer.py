@@ -85,6 +85,29 @@ class DataTransform:
             print(f"Error converting 'month' column to period: {e}")
         return self.df.copy()
     
+    def convert_month_to_int(self, column_name: str) -> pd.DataFrame:
+        """
+        Convert a column representing months to an integer format.
+
+        Parameters:
+        - column_name (str): Name of the column to be converted.
+
+        Returns:
+        - pd.DataFrame: A copy of the DataFrame with the converted column.
+
+        """
+        try:
+            self.df[column_name] = self.df[column_name].astype(str)
+            self.df['month'] = self.df['month'].str.lower()
+            # NOTE I would actually move your mappings into a separate file here and import it just to keep it cleaner
+            month_map = {'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'june': 6,
+                        'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12}
+            self.df[column_name] = self.df[column_name].map(month_map)
+            self.df[column_name] = pd.to_numeric(self.df[column_name])
+        except Exception as e:
+            print(f"Error converting 'month' column to integer: {e}")
+        return self.df.copy()
+    
     def convert_month_to_datetime(self, column_name: str) -> pd.DataFrame:
         """
         Convert a column representing months to a datetime format.
