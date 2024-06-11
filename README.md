@@ -20,7 +20,7 @@ Focusing on the marketing strategy, I discovered that ads traffic are the second
 ## Business Problem: 
 This fictitious multinational company is a leader in online sales. They have hired a data team to keep track of website transactions and spot trends in sales and website anomalies. The website transactions are stored in AWS RDS.
 
-## The Solution
+## The Solution:
 Perform **end-to-end exploratory data analysis (EDA)** to uncover and analyse trends, patterns and anomalies in **retail customer activity data**. The dataset used here belongs to an anonymised multinational retail company (provided by AiCore), and contains yearly online sales data and general website performance data.
 
 The data needs to extracted from AWS RDS and saved locally before proceeding to data cleaning and exploration. Then I will proceed to answer business queries from the sales and marketing teams.
