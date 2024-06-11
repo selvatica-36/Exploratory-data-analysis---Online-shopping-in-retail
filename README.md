@@ -5,28 +5,28 @@
 ## Stack
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white) ![Jupyter](https://img.shields.io/badge/Jupyter-298D46?style=for-the-badge&logo=jupyter&logoColor=white) ![Pandas](https://img.shields.io/badge/pandas-5C2D91?style=for-the-badge) ![SQAlchemy](https://img.shields.io/badge/SQLAlchemy-FF5722?style=for-the-badge) ![Git](https://img.shields.io/badge/Git-B1361E?style=for-the-badge&logo=git&logoColor=white) ![AWS](https://img.shields.io/badge/Amazon_AWS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white) ![VSCode](https://img.shields.io/badge/VSCode-2962FF?style=for-the-badge&logo=visual%20studio&logoColor=white)
 
+## Executive Summary: (in development)
 
-## Project Description
-✨ **Welcome** to this comprehensive **end-to-end EDA project** where we will uncover and analyse trends, patterns and anomalies in **retail customer activity data**. The dataset used here belongs to an anonymised multinational retail company (provided by AiCore), and contains yearly online sales data and general website performance data. 
 
-🔭 **The first part of the project focuses on data exploration and cleaning.** We will first develop an ELT pipeline: the data will be extracted from an AWS RDS database, loaded as a dataframe and cleaned for analysis by transforming column data types and dealing with missing data. The data will also be prepared for ML by dealing with outliers, overly correlated columns and data skewness. 
+## Business Problem: (in development)
 
-📊 **The second part of the project focuses on data analysis to uncover business insights.** We will answer relevant business questions regarding sales trends, marketing strategy, website performance and customer behaviour. To do so, we will generate informative data visualisations and **offer insights and recommendations**.
+## The Solution
+ **End-to-end EDA project** where we will uncover and analyse trends, patterns and anomalies in **retail customer activity data**. The dataset used here belongs to an anonymised multinational retail company (provided by AiCore), and contains yearly online sales data and general website performance data. 
 
-## Project set up and how-to guides
-For detailed guides to the project, please refer to the [Github Wiki](https://github.com/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail/wiki). These guides include installation instructions, how to use the repository and details on the dataset. 
+### Methodology
+1. **Data extraction and cleaning.** I developed an ELT pipeline: the data was be extracted from AWS RDS database, loaded as a dataframe and cleaned for analysis by transforming column data types and dealing with missing data. The data was also be prepared for ML by dealing with outliers, dropping overly correlated columns and correcting data skewness (log, boxcox transformations).
 
-## Currently working on
-- Developing a data story and case analysis study to include in this README file. This will involve a rewrite of the section below: **Business insights and recommendations**. *Please, come back again soon!*
+2. **Exploratory Data Analysis (EDA)**. I identified general trends in the data by looking at summary statistics, variable distributions and variable-variable relationships, and detected relevant anomalies. For data cleaning and EDA, please check the notebook [`EDA_website_activity.ipynb`](https://github.com/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail/blob/main/EDA_website_activity.ipynb).
 
-## Improvements and next steps 
-- Further deep dive into data missingness mechanisms to determine if imputation was done in the best way.
-- Investigate better ways of imputing data (if applicable): regression, MICE, KNN, etc.
+3. **Explanatory Data Analysis.** relevant business questions regarding sales trends, marketing strategy, website performance and customer behaviour. To do so, I generated informative data visualisations and **offered insights and recommendations**. This is available in the notebook [`business_analysis_report.ipynb`](https://github.com/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail/blob/main/business_analysis_report.ipynb).
 
-## Business insights and recommendations
-For the full exploratory data analysis (EDA), please check the notebook [`EDA_customer_activity.ipynb`](https://github.com/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail/blob/main/EDA_customer_activity.ipynb).
+### Skills
 
-For the full business analysis, please check the notebook [`business_analysis_report.ipynb`](https://github.com/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail/blob/main/business_analysis_report.ipynb).
+`Python`: Pandas, Numpy, SQLAlchemy, YAML, statsmodels, SciPy, matplotlib, seaborn, missingno, tabulate.
+
+`Excel`: pivot tables, pivot charts (conversion rate analysis only)
+
+### Business insights and recommendations
 
 ### 6.1. What are our customers doing?
 #### **Insights**
@@ -117,6 +117,17 @@ TRAFFIC TYPE CONTRIBUTION TO SALES
 2️⃣ Offer discounts to weekend visitors to entice weekend sales. 
 
 3️⃣ Increase budget in ads and social traffic. This should be done at the same time as increasing mobile accesibility to the website. 
+
+## Project set up and how-to guides
+For detailed guides to the project, please refer to the [Github Wiki](https://github.com/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail/wiki). These guides include installation instructions, how to use the repository and details on the dataset. 
+
+## Currently working on
+- Developing a data story and case analysis study to include in this README file. This will involve a rewrite of the section below: **Business insights and recommendations**. *Please, come back again soon!*
+
+## Improvements and next steps 
+- YoY growth analysis (in number of sales).
+- Investigate better ways of imputing data (if applicable): regression, MICE, KNN, etc.
+- Classification model to analyse whether certain factors are predictors of revenue.
 
 ## File Structure
 ```
