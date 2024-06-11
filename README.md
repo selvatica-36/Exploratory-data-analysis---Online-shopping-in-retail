@@ -5,20 +5,38 @@
 ## Stack
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white) ![Jupyter](https://img.shields.io/badge/Jupyter-298D46?style=for-the-badge&logo=jupyter&logoColor=white) ![Pandas](https://img.shields.io/badge/pandas-5C2D91?style=for-the-badge) ![SQAlchemy](https://img.shields.io/badge/SQLAlchemy-FF5722?style=for-the-badge) ![Git](https://img.shields.io/badge/Git-B1361E?style=for-the-badge&logo=git&logoColor=white) ![AWS](https://img.shields.io/badge/Amazon_AWS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white) ![VSCode](https://img.shields.io/badge/VSCode-2962FF?style=for-the-badge&logo=visual%20studio&logoColor=white)
 
-## Executive Summary: (in development)
+## Executive Summary: 
+In this project I uncovered trends and patterns in website transactional data from a multinational online retail company. Using Python, I extracted the data from AWS RDS, and then cleaned and transformed it for analysis and ML modelling. I performed exploratory data anlysis (EDA) on the dataset to uncover trends and patterns, and answered common questions from the sales and marketing teams. 
+
+Focusing on the marketing strategy, I discovered that ads traffic are the second largest driver of revenue (after direct search), bringing 28% of sales, followed by social traffic (19%). After a detailed analysis on conversion rates, bounce rates and mobile vs. desktop usage, these are my recommendations:
+
+1. Consider investing more in traffic with high conversion rates (20%+), such as affiliate marketing and youtube channels.
+
+2. Improve mobile platform acessibility and increase investing into social traffic, simultaneously.
+
+3. Review current costs/ad and campaign costs to evaluate whether to keep investing in current platforms. 
 
 
-## Business Problem: (in development)
+## Business Problem: 
+This fictitious multinational company is a leader in online sales. They have hired a data team to keep track of website transactions and spot trends in sales and website anomalies. The website transactions are stored in AWS RDS.
 
 ## The Solution
- **End-to-end EDA project** where we will uncover and analyse trends, patterns and anomalies in **retail customer activity data**. The dataset used here belongs to an anonymised multinational retail company (provided by AiCore), and contains yearly online sales data and general website performance data. 
+Perform **end-to-end exploratory data analysis (EDA)** to uncover and analyse trends, patterns and anomalies in **retail customer activity data**. The dataset used here belongs to an anonymised multinational retail company (provided by AiCore), and contains yearly online sales data and general website performance data.
+
+The data needs to extracted from AWS RDS and saved locally before proceeding to data cleaning and exploration. Then I will proceed to answer business queries from the sales and marketing teams.
 
 ### Methodology
+
+![alt text](/readme-images/EDA-Project.png)
+
 1. **Data extraction and cleaning.** I developed an ELT pipeline: the data was be extracted from AWS RDS database, loaded as a dataframe and cleaned for analysis by transforming column data types and dealing with missing data. The data was also be prepared for ML by dealing with outliers, dropping overly correlated columns and correcting data skewness (log, boxcox transformations).
 
 2. **Exploratory Data Analysis (EDA)**. I identified general trends in the data by looking at summary statistics, variable distributions and variable-variable relationships, and detected relevant anomalies. For data cleaning and EDA, please check the notebook [`EDA_website_activity.ipynb`](https://github.com/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail/blob/main/EDA_website_activity.ipynb).
 
 3. **Explanatory Data Analysis.** relevant business questions regarding sales trends, marketing strategy, website performance and customer behaviour. To do so, I generated informative data visualisations and **offered insights and recommendations**. This is available in the notebook [`business_analysis_report.ipynb`](https://github.com/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail/blob/main/business_analysis_report.ipynb).
+
+4. **Bonus**: conversion rate analysis using pivot tables in Excel.
+
 
 ### Skills
 
@@ -26,58 +44,13 @@
 
 `Excel`: pivot tables, pivot charts (conversion rate analysis only)
 
-### Business insights and recommendations
+### Case Study: Do we need to improve our marketing strategy? 
 
-### 6.1. What are our customers doing?
-#### **Insights**
-GENERAL SALES
-- 77% of total sales happen during the week, whereas 23 % of total sales happen on the weekend.
-- 39% of total sales happen in North America, followed by 17% in Western Europe. Oceania is the weakest market, making up 2.6% of total sales.
-- Google search brings more than 45% of total revenue, followed by Facebook ads (12%). Tiktok ads and facebook pages are amongst the least successful.
-- November is the month with the most revenue (38%) followed by May (17.5%). February and June are bring the least revenue (<1%).
+![alt text](/readme-images/marketing-strategy.png)
 
-<div style="text-align: center;">
-<img src="./readme-images/example_visualisation_1.png" class ="displayed" width="400" height="300" />
-</div>
+![alt text](/readme-images/marketing-strategy-2.png)
 
-WEBSITE ACTIVITY
--  Per visit, a user spends 89% of their time in product-related tasks, 8.7% in administrative tasks and 2.2% on informational tasks, on average. 
-    - There are a total of 296 product-related tasks, 24 administrative tasks and 13 informational tasks.
-    - The total amount of hours spent by all users combined in each task are:
-        - 4047 hours in product-related tasks.
-        - 269.5 hours in administrative tasks.
-        - 114.5 hours in informational tasks.
-- On average, users spents most time doing administrative tasks '21' and '17', and informational tasks '8' and '10'. However, there is **high variability** in the most pupular tasks amongst the user base.
-
-#### **Recommendations**
-
-1️⃣ Offer sales and discounts during February and June.
-
-2️⃣ Increase advertising budget on TikTok and Instagram as they are more frequently used than facebook.
-
-### 6.2. What software are our customers using the most to access the website?
-#### **Insights**
-OERATING SYSTEMS AND DEVICES
-- The three most used operating systems are: Windows (53.5%), MacOS (21.7%) and Android (21%). The least used systems are Ubuntu (0.07%) and ChromeOS (0.05%). **Out of the mainstream systems, iOS only takes 3%.**
-- 76% of users access the website through desktop and **24% via mobile.**
-- Breakdown of OS usage by region: trend seems to be consistent across all regions.
-
-![alt text](/readme-images/example2.png)
-
-BROWSER SUPPORT
-- The three most used browsers are: Google Chrome (65.6%), Safari (20.5%) and Mozilla Firefox (6.7%). **All three were accessed more often through desktop than mobile** (60-95% of the time).
-- Minimal impact: The only browser that was accessed more often via mobile was Android (0.98% of visits), with 95% of Android users accessing via mobile.
-
-<div style="text-align: center;">
-<img src="./readme-images/browser_device.png" class ="displayed" width="400" height="300" />
-</div>
-
-#### **Recommendations**
-
-1️⃣ **Improve mobile accessibility to the website.** Data shows most users access through desktop, which can indicate that the website does not work as well on mobile.
-
-### 6.3. Do we need to optimise the marketing strategy?
-#### **Insights**
+#### **More Insights**
 - Google search traffic contributes the most to revenue across all regions (40-50%). Facebook ads is the second highest contributor in all regions except for South America, where Bing search takes second place. Trends are fairly similar across all regions.
 
 ![alt text](/readme-images/traffic_revenue_region.png)
@@ -85,38 +58,21 @@ BROWSER SUPPORT
 
 - November generated the most sales from ads traffic (11% of total sales), followed by May and December. February generated the least amount of sales from ads traffic (0.1%). Facebook ads generate the most sales across all months except for May, where instagram ads where most successful.
 
-<div style="text-align: center;">
-<img src="./readme-images/traffic_ads_revenue.png" class ="displayed" width="400" height="300" />
-</div>
-
 #### **Recommendations**
 
 1️⃣ Spend less or cut Youtube ads. Youtube ads are not effective: they have the highest bounce rate and bring very little revenue.
 
-2️⃣ Spend more on instagram ads. Instagram ads have the potential to bring more revenue: the bring about 10% of revenue, despite the high bounce rates. Out of all sial ad platforms, instagram comes second every month except for May, where instagram ads where the most sucessful.
+2️⃣ Spend more on instagram ads. Instagram ads have the potential to bring more revenue: the bring about 10% of revenue, despite the high bounce rates. Out of all social ad platforms, instagram comes second every month except for May, where instagram ads where the most sucessful.
 
-3️⃣ Keep investing on instagram pages. They are effective (low bounce rates) even if they only bring < 5 % of revenue.
+3️⃣ Increase budget in ads and social traffic. This should be done at the same time as increasing mobile accesibility to the website.
 
-### 6.4. Detailed sales breakdown
-#### **Insights**
-NEW VS. RETURNING VISITORS
- - Most purchases are made by returning visitors (79.5%). 
- - Returning visitors make up 86.7% of total visitors. Out of all returning visitors, 14% of them make a purchase.
- - Out of all new visitors, 24% of them make a purchase.
+### Additional business recomendations 
 
-WEEK VS. WEEKEND SALES
- - The percentage of visitors making a purchase on the weekend (16.9%) is marginally higher than the percentage of visitors making a purchase during the week (15%). However, as we analysed in Part 1, most sales happen during the week (77%) because the number of total visitors Monday-Friday is x3.8 times higher than during the weekend.
+1️⃣ Offer sales and discounts during February and June (lowest revenue months).
 
-TRAFFIC TYPE CONTRIBUTION TO SALES
-- Search traffic is contributing the most to total sales (55%), followed by ads traffic (27.7%), social traffic (15.9%) and direct traffic (1.3%).
+2️⃣ Offer discounts to weekend visitors to entice weekend sales, as well as to returning visitors.
 
-#### **Recommendations**
-
-1️⃣ Offer rewards and discounts for returning visitors. 
-
-2️⃣ Offer discounts to weekend visitors to entice weekend sales. 
-
-3️⃣ Increase budget in ads and social traffic. This should be done at the same time as increasing mobile accesibility to the website. 
+3️⃣ **Improve mobile accessibility to the website.** Data shows most users access through desktop, which can indicate that the website does not work as well on mobile.
 
 ## Project set up and how-to guides
 For detailed guides to the project, please refer to the [Github Wiki](https://github.com/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail/wiki). These guides include installation instructions, how to use the repository and details on the dataset. 
@@ -132,7 +88,7 @@ For detailed guides to the project, please refer to the [Github Wiki](https://gi
 ## File Structure
 ```
 ├──data
-│   ├── cleaned_skewed_data.csv  #Cleaned data for analysis
+│   ├── customer_web_data_clean.csv  #Cleaned data for analysis
 │   ├── ML_preprocessed_data.csv #Cleaned and transformed data for ML 
 │   └── customer_activity.csv #Data downloaded fron RDS database 
 ├── readme-images
@@ -144,8 +100,9 @@ For detailed guides to the project, please refer to the [Github Wiki](https://gi
 │   ├── plotter.py
 │   ├── statistical_tests.py
 │   └── transformer.py 
-├── EDA_customer_activity.ipynb
+├── EDA_website_activity.ipynb
 ├── business_analysis_report.ipynb
+├── conversion_rate_analysis.xlsx
 ├── requirements.txt
 ├── environment.yml
 ├── .gitignore
