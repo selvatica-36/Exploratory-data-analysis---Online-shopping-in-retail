@@ -77,9 +77,6 @@ The data needs to extracted from AWS RDS and saved locally before proceeding to 
 ## Project set up and how-to guides
 For detailed guides to the project, please refer to the [Github Wiki](https://github.com/selvatica-36/Exploratory-data-analysis---Online-shopping-in-retail/wiki). These guides include installation instructions, how to use the repository and details on the dataset. 
 
-## Currently working on
-- Developing a data story and case analysis study to include in this README file. This will involve a rewrite of the section below: **Business insights and recommendations**. *Please, come back again soon!*
-
 ## Improvements and next steps 
 - YoY growth analysis (in number of sales).
 - Investigate better ways of imputing data (if applicable): regression, MICE, KNN, etc.
