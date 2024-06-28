@@ -6,7 +6,8 @@
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white) ![Jupyter](https://img.shields.io/badge/Jupyter-298D46?style=for-the-badge&logo=jupyter&logoColor=white) ![Pandas](https://img.shields.io/badge/pandas-5C2D91?style=for-the-badge) ![SQAlchemy](https://img.shields.io/badge/SQLAlchemy-FF5722?style=for-the-badge) ![Git](https://img.shields.io/badge/Git-B1361E?style=for-the-badge&logo=git&logoColor=white) ![AWS](https://img.shields.io/badge/Amazon_AWS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white) ![VSCode](https://img.shields.io/badge/VSCode-2962FF?style=for-the-badge&logo=visual%20studio&logoColor=white)
 
 ## Executive Summary: 
-In this project I uncovered trends and patterns in website transactional data from a multinational online retail company. Using Python, I extracted the data from AWS RDS, and then cleaned and transformed it for analysis and ML modelling. I performed exploratory data anlysis (EDA) on the dataset and answered common questions from the sales and marketing teams. 
+
+In this project I uncovered trends and patterns in website transactional data from a multinational online retail company. Using Python, I extracted the data from AWS RDS, and then cleaned and transformed it for analysis and ML modelling. I performed exploratory data anlysis (EDA) on the dataset to uncover actionable insights, and answered common questions from the sales and marketing teams. 
 
 Focusing on the marketing strategy, I discovered that ads traffic are the second largest driver of revenue (after direct search), bringing 28% of sales, followed by social traffic (19%). After a detailed analysis on conversion rates, bounce rates and mobile vs. desktop usage, these are my recommendations:
 
